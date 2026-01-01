@@ -35,7 +35,7 @@ Benchmarks were executed on a Windows workstation (CPU-only):
 ## Installation
 
 ### Core (no PyKAN)
-This installs the LUT and B-spline backends, metrics, and aggregation utilities.
+This installs LUT/B-spline backends, metrics, and aggregation utilities.
 
 ```bash
 python -m venv .venv
@@ -47,17 +47,17 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-You can run unit tests and LUT/B-spline backends without PyKAN:
+Run unit tests (PyKAN-dependent tests are skipped if PyKAN is not installed):
 
 ```bash
 pytest -q
 ```
 
-### Optional: PyKAN reference (required for configs starting with `exp_pykan_*`)
-The experiment runner uses PyKAN as a *reference model source* in those configs (import: `from kan import KAN`).
+### Optional: PyKAN reference (required for `exp_pykan_*` configs)
+The experiment runner uses PyKAN as a reference model source (import: `from kan import KAN`).
 
-Important: **do not** install the unrelated PyPI package `kan==0.0.2` (it does not provide `KAN`).
-If you installed it earlier, remove it:
+Important: do not install the unrelated PyPI package `kan==0.0.2` (it does not provide `KAN`).
+If it is installed, remove it:
 
 ```bash
 pip uninstall -y kan
@@ -90,7 +90,6 @@ python scripts/run_experiment.py configs/exp_pykan_lut_inrange_closed.yaml
 ```
 
 ### Sweep over LUT resolution L
-Example (closed boundary, in-range calibration):
 ```bash
 python scripts/run_experiment.py configs/sweeps/inrange_closed_L16.yaml
 python scripts/run_experiment.py configs/sweeps/inrange_closed_L32.yaml
@@ -98,7 +97,7 @@ python scripts/run_experiment.py configs/sweeps/inrange_closed_L64.yaml
 python scripts/run_experiment.py configs/sweeps/inrange_closed_L128.yaml
 ```
 
-### Aggregation into paper-ready tables
+### Aggregate results into paper-ready tables
 ```bash
 python scripts/collect_results.py --root outputs --outdir outputs/summary --latex_dir outputs/summary_latex
 ```
@@ -114,17 +113,17 @@ Outputs (CSV):
 This codebase supports two per-segment LUT quantization schemes:
 
 1) Symmetric quantization (int8)  
-Per segment, store a scale $s>0$ and quantize to $q\in[-127,127]$.
+Per segment, store a scale $s>0$ and quantize to $q\in[-127,127]$.  
 Dequantization: $\hat y = s\cdot q$.
 
 2) Asymmetric (affine) quantization (uint8)  
-Per segment, store $(y_\min, s)$ and quantize to $q\in[0,255]$.
-Dequantization: $\hat y = y_\min + s\cdot q$.
+Per segment, store $(y_\min, s)$ and quantize to $q\in[0,255]$.  
+Dequantization: $\hat y = y_\min + s\cdot q$.  
 This implementation uses the explicit $y_\min$ offset and does not accept a manual zero-point.
 
 ## Fair speed baseline (NumPy vs NumPy; Numba vs Numba)
 
-We report LUT speedups **against an optimized B-spline baseline under the same backend**:
+We report LUT speedups against an optimized B-spline baseline under the same backend:
 - NumPy B-spline evaluation vs NumPy LUT evaluation
 - Numba-jitted B-spline evaluation vs Numba-jitted LUT evaluation
 
@@ -138,13 +137,13 @@ Representative results (mean over `n` seeds; configuration: `spline_component`, 
 | 128 | 27.239 | 2.3415 | 11.981 | 6.0808 | 0.595058 | 10.205 | 5 |
 
 Interpretation:
-- LUT inference is ~**11–14× faster** than NumPy B-spline evaluation.
-- Under Numba JIT, LUT inference remains ~**9.5–11× faster** than the Numba B-spline baseline.
-This isolates the effect of **representation** (LUT vs B-spline), not merely vectorization/JIT.
+- LUT inference is approximately 11–14× faster than NumPy B-spline evaluation.
+- Under Numba JIT, LUT inference remains approximately 9.5–11× faster than the Numba B-spline baseline.
+This isolates the effect of representation (LUT vs B-spline), not merely vectorization/JIT.
 
 ## Accuracy vs LUT resolution L (int8 symmetric vs uint8 asymmetric)
 
-Representative accuracy numbers for `half_open` boundary (which induces OOB samples), showing both
+Representative accuracy numbers for `half_open` boundary mode (which induces OOB samples), showing both
 symmetric int8 and asymmetric uint8:
 
 | L | in MAE (int8 sym) | in max_abs | in MAE (uint8 asym) | in max_abs | OOB-only max_abs | OOB-any frac | n |
@@ -155,8 +154,8 @@ symmetric int8 and asymmetric uint8:
 | 128 | 8.37491e-05 | 0.000429052 | 8.01496e-05 | 0.000425662 | 0.000347595 | 0.101367 | 5 |
 
 Key points:
-- Increasing $L$ monotonically improves accuracy (lower MAE/max_abs).
-- Symmetric int8 and asymmetric uint8 are close in this setting; the latter is the “affine/asymmetric” scheme used in the paper.
+- Increasing $L$ improves accuracy (lower MAE/max_abs).
+- Symmetric int8 and asymmetric uint8 are close in this setting; the latter is the affine/asymmetric scheme.
 
 ## Memory footprint (LUT vs float parameters)
 
@@ -174,8 +173,9 @@ This demonstrates an explicit accuracy–memory trade-off: higher $L$ improves f
 
 ## OOB robustness matrix
 
-We measure OOB incidence and errors separately on `in-range` and `OOB-only` subsets for combinations:
-$(\text{oob\_policy\_mode} \in \{\text{clip\_x},\text{zero\_spline}\}) \times (\text{boundary\_mode} \in \{\text{half\_open},\text{closed}\})$.
+We measure OOB incidence and errors separately on `in-range` and `OOB-only` subsets for the Cartesian product:
+- `oob_policy_mode` ∈ {`clip_x`, `zero_spline`}
+- `boundary_mode` ∈ {`half_open`, `closed`}
 
 Example (L=64, `spline_component`, int8 symmetric):
 
@@ -189,7 +189,7 @@ Example (L=64, `spline_component`, int8 symmetric):
 Notes:
 - `closed` boundary mode prevents OOB samples by construction (OOB fraction ≈ 0).
 - `half_open` produces a controlled OOB fraction (≈ 0.10 in this benchmark).
-- Full-phi evaluation can be significantly more OOB-sensitive. In one diagnostic run (`phi`, `clip_x`, `half_open`, `uint8 asymmetric`, L=8), we observed OOB-any fraction 0.188 with OOB-only max_abs 0.337 (in-range max_abs 0.034). In this repository, most experiments focus on the contracted `spline_component` representation for stable and interpretable error accounting.
+- OOB sensitivity can be substantially larger when benchmarking full `phi` (base + spline) rather than the contracted `spline_component`.
 
 ## Reproducibility and outputs
 - Runs are seeded; aggregation reports mean/std/CI95 per configuration.
