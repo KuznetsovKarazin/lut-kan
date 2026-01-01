@@ -1,0 +1,11 @@
+_base_: "exp_dummy_scale_8x8.yaml"
+
+experiment:
+  name: "dummy_scale_32x32_L32_v1"
+  description: "Dummy 32x32 layer, L=32"
+
+float_model:
+  arch:
+    in_dim: 32
+    out_dim: 32
+

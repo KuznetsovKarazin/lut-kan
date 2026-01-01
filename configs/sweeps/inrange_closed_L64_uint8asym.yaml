@@ -1,0 +1,10 @@
+_base_: ../exp_pykan_lut_inrange_closed.yaml
+converter:
+  build_lut:
+    L: 64
+  quant:
+    dtype: uint8
+    scheme: asymmetric
+    zero_point: auto
+experiment:
+  name: pykan_lut_inrange_closed_L64_uint8asym

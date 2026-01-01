@@ -1,0 +1,25 @@
+_base_: "spec.yaml"
+
+experiment:
+  name: "dummy_lut_sanity_v1"
+  group: "dummy"
+  description: "Dummy adapter: float vs LUT sanity + phi_error + speed/memory"
+
+float_model:
+  backend: "dummy"
+  checkpoint: "unused"
+  adapter: "src/models/dummy_adapter.py"
+
+converter:
+  enabled: true
+  build_lut:
+    L: 32
+  interp:
+    mode: "linear"
+  quant:
+    dtype: "uint8"
+    scheme: "asymmetric"
+
+logging:
+  out_dir: "outputs/exp_runs/dummy_lut_sanity_v1"
+  versioning: "increment"

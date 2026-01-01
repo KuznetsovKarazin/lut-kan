@@ -1,0 +1,18 @@
+_base_: spec.yaml
+experiment:
+  name: L128_uint8_asymmetric_linear_v1
+  group: sensitivity_grid
+  description: L=128, dtype=uint8, scheme=asymmetric, interp=linear
+converter:
+  build_lut:
+    L: 128
+  interp:
+    mode: linear
+  quant:
+    dtype: uint8
+    scheme: asymmetric
+    qmin: 0
+    qmax: 255
+    zero_point: auto
+logging:
+  out_dir: outputs/exp_runs/L128_uint8_asymmetric_linear_v1

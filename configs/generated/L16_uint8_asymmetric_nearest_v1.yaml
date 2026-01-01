@@ -1,0 +1,18 @@
+_base_: spec.yaml
+experiment:
+  name: L16_uint8_asymmetric_nearest_v1
+  group: sensitivity_grid
+  description: L=16, dtype=uint8, scheme=asymmetric, interp=nearest
+converter:
+  build_lut:
+    L: 16
+  interp:
+    mode: nearest
+  quant:
+    dtype: uint8
+    scheme: asymmetric
+    qmin: 0
+    qmax: 255
+    zero_point: auto
+logging:
+  out_dir: outputs/exp_runs/L16_uint8_asymmetric_nearest_v1

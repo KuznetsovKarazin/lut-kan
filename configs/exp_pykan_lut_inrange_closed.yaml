@@ -1,0 +1,14 @@
+_base_: exp_pykan_lut.yaml
+calibration:
+  inputs:
+    distribution: normal
+    mean: 0.0
+    std: 1.0
+    clip_min: -2.2
+    clip_max: 2.2
+converter:
+  oob_policy:
+    mode: zero_spline
+    boundary: half_open 
+experiment:
+  name: exp_pykan_lut_inrange_closed.yaml

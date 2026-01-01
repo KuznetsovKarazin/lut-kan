@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it."
+title: "LUT-KAN: Segment-wise LUT Quantization for Fast KAN Inference"
+type: software
+authors:
+  - family-names: "Kuznetsov"
+    given-names: "Oleksandr"
+repository-code: "https://github.com/KuznetsovKarazin/lut-kan"
+license: MIT

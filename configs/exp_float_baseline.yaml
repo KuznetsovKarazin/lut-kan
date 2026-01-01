@@ -1,0 +1,23 @@
+# configs/exp_float_baseline.yaml
+_base_: "spec.yaml"
+
+experiment:
+  name: "float_baseline_v1"
+  group: "baseline"
+  description: "Float KAN (no conversion, no quantization)"
+
+float_model:
+  checkpoint: "unused"
+  arch:
+    width: [8, 8]
+    grid: 5
+    k: 3
+    seed: 0
+    device: cpu
+
+converter:
+  enabled: false
+
+
+logging:
+  out_dir: "outputs/exp_runs/float_baseline_v1"

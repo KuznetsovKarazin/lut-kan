@@ -1,0 +1,35 @@
+# configs/debug_small.yaml
+_base_: "spec.yaml"
+
+float_model:
+  checkpoint: "unused"
+  arch:
+    width: [8, 8]
+    grid: 5
+    k: 3
+    seed: 0
+    device: cpu
+
+experiment:
+  name: "debug_small_v1"
+  group: "debug"
+  description: "Small config for fast sanity checks"
+
+debug:
+  enable: true
+  dataset_limit_samples: 100
+  save_all_luts: true
+  dump_quant_stats: true
+
+calibration:
+  num_samples: 128
+  batch_size: 32
+
+converter:
+  build_lut:
+    L: 8
+
+logging:
+  out_dir: "outputs/exp_runs/debug_small_v1"
+  verbose: true
+  save_plots: true

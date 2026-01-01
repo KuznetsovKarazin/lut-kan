@@ -1,0 +1,22 @@
+# configs/exp_L64_int8_linear.yaml
+_base_: "spec.yaml"
+
+experiment:
+  name: "L64_int8_linear_v1"
+  group: "sensitivity_L"
+  description: "L=64, int8 symmetric, linear"
+
+converter:
+  build_lut:
+    L: 64
+  interp:
+    mode: "linear"
+  quant:
+    dtype: "int8"
+    scheme: "symmetric"
+    qmin: -127
+    qmax: 127
+    zero_point: 0
+
+logging:
+  out_dir: "outputs/exp_runs/L64_int8_linear_v1"

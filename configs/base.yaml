@@ -1,0 +1,46 @@
+seed: 42
+device: cpu
+
+dataset:
+  name: YOUR_DATASET
+  path: data/...
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+  preprocess:
+    normalize: true
+    calibration_batches: 64
+
+float_model:
+  backend: pykan
+  checkpoint: outputs/float/model.pt
+  adapter: src/models/kan_wrapper.py
+
+converter:
+  build_lut:
+    L: 64
+    knots_source: model   # model | shared
+  quant:
+    Q: 256
+    dtype: uint8          # uint8 | int8
+    meta_dtype: float16   # float16 | float32
+    per_segment: true     # segment-wise
+  oob_policy: clip        # clip | saturate
+  interp: linear          # nearest | linear
+
+inference:
+  accumulation: fp32      # fp32 (MVP)
+  batch_size: 1024
+
+evaluation:
+  metrics: [accuracy]     
+  extra:
+    phi_error: true       # MAE/RMSE/max 
+    speed: true           # latency/throughput
+    memory: true
+
+logging:
+  out_dir: outputs/exp_runs
+  save_artifact: true
+  save_predictions: false

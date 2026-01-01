@@ -1,0 +1,18 @@
+_base_: spec.yaml
+experiment:
+  name: L16_int8_symmetric_linear_v1
+  group: sensitivity_grid
+  description: L=16, dtype=int8, scheme=symmetric, interp=linear
+converter:
+  build_lut:
+    L: 16
+  interp:
+    mode: linear
+  quant:
+    dtype: int8
+    scheme: symmetric
+    qmin: -127
+    qmax: 127
+    zero_point: 0
+logging:
+  out_dir: outputs/exp_runs/L16_int8_symmetric_linear_v1

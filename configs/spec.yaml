@@ -1,0 +1,125 @@
+# configs/spec.yaml
+version: 1.2
+
+experiment:
+  name: "baseline"
+  group: "dev"
+  description: "Float KAN -> segment-wise LUT -> quantized LUT inference"
+  timestamp: "auto"
+
+runtime:
+  seed: 42
+  device: "cpu"
+  num_threads: 1
+  deterministic: true
+
+dataset:
+  name: "YOUR_DATASET"
+  path: "data/..."
+  task: "regression"
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+  preprocess:
+    normalize: true
+    normalize_mode: "standard"
+
+calibration:
+  source_split: "train"
+  num_samples: 1024
+  batch_size: 32
+  sampling: "random"
+  seed: 42
+
+float_model:
+  backend: "pykan"
+  checkpoint: "outputs/float/model.pt"
+  adapter: "src/models/kan_wrapper.py"
+  arch: null
+
+training:
+  enabled: false
+  load_from_checkpoint: true
+  epochs: 100
+  lr: 1e-3
+  batch_size: 32
+
+converter:
+  enabled: true
+  build_lut:
+    L: 64
+    knots_source: "model"
+    x_range_mode: "knots"
+    margin_std: 3.0
+  oob_policy:
+    mode: "clip_x"
+  interp:
+    mode: "linear"
+  y_range:
+    method: "minmax"
+    lower_percentile: 0.1
+    upper_percentile: 99.9
+  quant:
+    dtype: "uint8"
+    scheme: "asymmetric"
+    use_full_int8_range: false
+    qmin: "auto"
+    qmax: "auto"
+    zero_point: "auto"
+    per_segment: true
+    meta_dtype: "float16"
+    store_float_lut: false
+
+inference:
+  batch_size: 1024
+  enable_batching: true
+  accumulation: "fp32"
+  fixed_point_interp: null
+
+evaluation:
+  metrics:
+    regression: ["mse", "mae", "r2"]
+    classification: ["accuracy", "f1"]
+  extra:
+    phi_error:
+      enable: true
+      metrics: ["mae", "rmse", "max_abs"]
+      per_segment: true
+      report_topk_functions: 3
+    speed:
+      enable: true
+      warmup_iters: 10
+      measure_iters: 100
+    memory:
+      enable: true
+      breakdown: true
+
+logging:
+  out_dir: "outputs/exp_runs"
+  versioning: "git_hash"
+  artifact_format: "npz"
+  save_artifact: true
+  save_predictions: false
+  save_plots: true
+  save_intermediate: false
+  plot_worst_functions: 3
+  verbose: true
+
+debug:
+  enable: false
+  dataset_limit_samples: null
+  save_all_luts: false
+  plot_every_function: false
+  dump_quant_stats: false
+  validate_numerics: true
+  epsilon: 1e-7
+
+validation:
+  strict: true
+  rules:
+    - "require_deep_merge"
+    - "base_path_is_relative_to_yaml_dir"
+    - "uint8_requires_asymmetric"
+    - "int8_symmetric_requires_zero_point_0"
+    - "knots_source_model_only_in_mvp"

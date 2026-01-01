@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lut-kan"
+version = "0.1.0"
+description = "LUT-based inference for KAN with quantization and benchmarking"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Oleksandr Kuznetsov"}]
+
+dependencies = [
+  "numpy>=1.24",
+  "pyyaml>=6.0",
+  "pydantic>=2.6",
+  "tqdm>=4.66",
+  "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4",
+  "ruff>=0.5",
+]
+numba = [
+  "numba>=0.58",
+]
+pykan = [
+  "torch>=2.1",
+  "kan",
+]
+
+[project.scripts]
+lut-kan-run = "scripts.run_experiment:main"
+lut-kan-smoke = "scripts.smoke_config:main"
+lut-kan-bench-scaling = "scripts.bench_scaling:main"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*","scripts*"]

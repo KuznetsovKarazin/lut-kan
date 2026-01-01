@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local configs / secrets
+.env
+.env.*
+
+# Outputs / artifacts (do not commit large experiment runs)
+outputs/
+model/
+models/
+checkpoints/
+*.pt
+*.pth
+*.onnx
+*.npz
+*.pkl
+
+# Temporary files
+tmp/
+*.tmp
+
+# Data (if any)
+data/
+datasets/

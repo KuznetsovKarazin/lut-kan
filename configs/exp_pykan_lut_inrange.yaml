@@ -1,0 +1,12 @@
+_base_: exp_pykan_lut.yaml
+
+calibration:
+  inputs:
+    distribution: normal
+    mean: 0.0
+    std: 1.0
+    clip_min: -2.2
+    clip_max: 2.2
+
+experiment:
+  name: pykan_lut_inrange

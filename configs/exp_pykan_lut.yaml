@@ -1,0 +1,83 @@
+_base_: spec.yaml
+
+experiment:
+  name: pykan_lut_sanity_v1
+  group: pykan
+  description: "PyKAN single-layer float vs LUT sanity (offset-ymin quantization compliant with paper)"
+
+runtime:
+  seed: 4
+  device: cpu
+  num_threads: 1
+  deterministic: true
+
+
+dataset:
+  name: synthetic_unused
+  path: unused
+  task: regression
+  split: {train: 0.7, val: 0.15, test: 0.15}
+  preprocess: {normalize: false, normalize_mode: none}
+
+float_model:
+  backend: pykan
+  checkpoint: unused
+  adapter: "src.models.kan_wrapper:PyKANSingleLayerAdapter"
+  arch:
+    width: [8, 8]
+    grid: 5
+    k: 3
+    grid_eps: 1.0
+    enforce_shared_grid: true
+    device: cpu
+    call_speed: true
+
+calibration:
+  source_split: train
+  num_samples: 1024
+  inputs:
+    distribution: normal     # normal | uniform
+    mean: 0.0
+    std: 1.0
+    clip_min: -2.2
+    clip_max: 2.2
+  batch_size: 32
+  sampling: random
+  seed: 0
+
+converter:
+  enabled: true
+  value_representation: spline_component # phi or spline_component
+  build_lut:
+    L: 64
+    knots_source: model
+    x_range_mode: knots
+  oob_policy:
+    mode: clip_x # clip_x or zero_spline (only for spline_component)             
+    boundary: closed # half_open   
+  # oob_behavior: clip_x  # clip_x or zero (only for spline_component)    
+  interp:
+    mode: linear
+  y_range:
+    method: percentile
+    lower_percentile: 0.5
+    upper_percentile: 99.5
+  quant:
+    dtype: int8
+    scheme: symmetric
+    zero_point: 0
+    per_segment: true
+    meta_dtype: float16
+
+logging:
+  out_dir: outputs/exp_runs/pykan_lut_sanity_v1
+  versioning: increment
+  verbose: true
+  save_plots: true
+
+debug:
+  enable: false
+
+validation:
+  strict: true
+  rules: []
