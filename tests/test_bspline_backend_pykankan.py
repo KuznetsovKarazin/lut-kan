@@ -4,6 +4,17 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+try:
+    from kan import KAN  # noqa: F401
+except Exception:
+    pytest.skip(
+        "PyKAN is not installed (or a non-PyKAN 'kan' package is installed). "
+        "Install PyKAN via `pip install pykan` or "
+        "`pip install git+https://github.com/KindXiaoming/pykan.git`.",
+        allow_module_level=True,
+    )
+
+
 from src.kernels.bspline_contract import pack_bspline_dense_layer_from_pykankan_adapter
 from src.kernels.bspline_backend_dense_numpy import forward_bspline_dense_numpy
 from src.kernels.bspline_backend_dense_numba import forward_bspline_dense_numba, numba_available
@@ -17,7 +28,7 @@ def _max_abs(a: np.ndarray, b: np.ndarray) -> float:
 
 def _make_adapter(width, grid, k, seed, layer_idx=0):
     pytest.importorskip("torch")
-    pytest.importorskip("kan", reason="PyKAN (kan) not installed")
+    #pytest.importorskip("kan", reason="PyKAN (kan) not installed")
     from src.models.kan_wrapper import PyKANSingleLayerAdapter
 
     arch = {"width": list(width), "grid": int(grid), "k": int(k), "seed": int(seed), "layer_idx": int(layer_idx)}
