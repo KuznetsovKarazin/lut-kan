@@ -26,6 +26,10 @@ jobs:
           pip install -r requirements-dev.txt
           pip install -e .
 
+      - name: Remove non-PyKAN 'kan' if present
+        run: |
+          pip uninstall -y kan || true
+
       - name: Run tests
         env:
           PYTHONPATH: ${{ github.workspace }}
