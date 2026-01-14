@@ -1,4 +1,4 @@
-# LUT-KAN: Segment-wise LUT Quantization for Fast KAN Inference
+ LUT-KAN: Segment-wise LUT Quantization for Fast KAN Inference
 
 This repository provides a reproducible benchmark suite for **segment-wise LUT (look-up table) inference** for KAN edges,
 including (i) **numerically validated** B-spline baselines and (ii) **fair speed comparisons** under matched optimization
@@ -195,5 +195,31 @@ Notes:
 - Runs are seeded; aggregation reports mean/std/CI95 per configuration.
 - Large artifacts under `outputs/` are intentionally excluded from version control (see `.gitignore`).
 
+## Citation
+
+If you use this work in your research, please cite:
+
+```bibtex
+@article{Kuznetsov_2026,
+  title   = {LUT-KAN: Segment-wise LUT Quantization for Fast KAN Inference},
+  url     = {http://arxiv.org/abs/2601.03332},
+  doi     = {10.48550/arXiv.2601.03332},
+  note    = {arXiv:2601.03332 [cs]},
+  author  = {Kuznetsov, Oleksandr},
+  year    = {2026},
+  month   = jan
+}
+
+```
+
 ## License
 MIT License (see `LICENSE`).
+
+## Contact
+
+- Oleksandr Kuznetsov - oleksandr.o.kuznetsov@gmail.com
+- Project Link: https://github.com/KuznetsovKarazin/lut-kan
+
+## Acknowledgments
+
+- KAN implementation based on pykan: https://github.com/KindXiaoming/pykan
