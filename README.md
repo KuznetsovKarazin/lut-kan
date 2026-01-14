@@ -1,4 +1,4 @@
-# LUT-KAN: Segment-wise LUT Quantization for Fast KAN Inference
+ LUT-KAN: Segment-wise LUT Quantization for Fast KAN Inference
 
 This repository provides a reproducible benchmark suite for **segment-wise LUT (look-up table) inference** for KAN edges,
 including (i) **numerically validated** B-spline baselines and (ii) **fair speed comparisons** under matched optimization
