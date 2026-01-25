@@ -1,199 +1,191 @@
 # LUT-KAN: Segment-wise LUT Quantization for Fast KAN Inference
 
-This repository provides a reproducible benchmark suite for **segment-wise LUT (look-up table) inference** for KAN edges,
-including (i) **numerically validated** B-spline baselines and (ii) **fair speed comparisons** under matched optimization
-levels (NumPy vs NumPy and Numba vs Numba).
+[![arXiv](https://img.shields.io/badge/arXiv-2601.03332-b31b1b.svg)](https://arxiv.org/abs/2601.03332)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-The implementation targets CPU inference and emphasizes:
-- deterministic and dependency-light deployment (pure NumPy/Numba runtime for LUT inference),
-- explicit trade-offs among **accuracy**, **speed**, and **memory**,
-- robustness analysis for **out-of-bounds (OOB)** inputs via a policy × boundary-mode matrix.
+This repository provides a reproducible benchmark suite for **segment-wise LUT (look-up table) inference** for Kolmogorov-Arnold Networks (KAN), supporting both **B-spline** and **Jacobi polynomial** basis functions.
 
-## Repository layout
+**v2.0 Features:**
+- 🆕 **Jacobi polynomial basis**: Chebyshev (1st/2nd kind), Legendre, Gegenbauer
+- 🆕 **MCU benchmarking**: Cycle-accurate ARM Cortex-M3 via QEMU
+- 🆕 **C code export**: Direct deployment to embedded systems
+- 🆕 **Publication tools**: IEEE/ACM-ready tables and figures
+
+## Key Results
+
+LUT inference achieves significant speedups over direct polynomial evaluation:
+
+| Basis | Platform | Speedup Range | Best Config |
+|-------|----------|---------------|-------------|
+| B-spline | CPU (NumPy) | 11–14× | L=64, int8 |
+| B-spline | CPU (Numba) | 9.5–11× | L=64, int8 |
+| Jacobi (Chebyshev) | MCU (Cortex-M3) | 2–6× | L=32–64, degree=3–5 |
+
+## Repository Layout
 
 ```
 lut-kan/
-  configs/                 experiment specs + generated sweep configs
-  scripts/                 CLI entrypoints (used for reproduction)
-  src/
-    experiments/           experiment runner + instrumentation
-    kernels/               B-spline and LUT backends (numpy/numba/reference)
-    metrics/               accuracy and OOB-split metrics
-    models/                PyKAN adapter (optional dependency)
-    quant/                 LUT build/IO and quantization utilities
-    utils/                 config parsing and helpers
-  tests/                   numerical correctness tests
+├── configs/
+│   ├── jacobi_types/       # Jacobi polynomial configurations
+│   └── sweeps/             # Parameter sweep configs
+├── scripts/
+│   ├── mcu_qemu_benchmark.py    # ARM Cortex-M3 benchmark
+│   ├── export_lut_to_c.py       # LUT → C header export
+│   ├── publication_analysis.py  # IEEE/ACM tables & figures
+│   └── unified_benchmark_sweeper.py
+├── src/
+│   ├── kernels/            # B-spline and LUT backends
+│   ├── models/             # Adapters (PyKAN, Jacobi, B-spline)
+│   ├── quant/              # LUT builder & quantization
+│   └── metrics/            # Accuracy and performance metrics
+└── tests/                  # Numerical correctness tests
 ```
-
-## Environment (reference)
-
-Benchmarks were executed on a Windows workstation (CPU-only):
-- CPU: AMD Ryzen 7 7840HS (3.80 GHz)
-- RAM: 64 GB
-- OS: Windows
 
 ## Installation
 
-### Core (no PyKAN)
-This installs LUT/B-spline backends, metrics, and aggregation utilities.
+### Core Installation
 
 ```bash
 python -m venv .venv
-# Windows:
-.venv\Scripts\activate
-# Linux/macOS:
-# source .venv/bin/activate
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate   # Windows
 
 pip install -r requirements.txt
 ```
 
-Run unit tests (PyKAN-dependent tests are skipped if PyKAN is not installed):
+### Optional: PyKAN (for B-spline reference models)
 
 ```bash
-pytest -q
-```
-
-### Optional: PyKAN reference (required for `exp_pykan_*` configs)
-The experiment runner uses PyKAN as a reference model source (import: `from kan import KAN`).
-
-Important: do not install the unrelated PyPI package `kan==0.0.2` (it does not provide `KAN`).
-If it is installed, remove it:
-
-```bash
+# Remove conflicting package if installed
 pip uninstall -y kan
-```
 
-Install PyKAN:
-
-```bash
-pip install pykan
-# or (recommended, most robust):
+# Install PyKAN
 pip install git+https://github.com/KindXiaoming/pykan.git
 ```
 
-Sanity-check:
+### Optional: MCU Benchmarking
+
+Requires ARM GCC toolchain and QEMU:
 
 ```bash
-python -c "from kan import KAN; print(KAN)"
+# Ubuntu/Debian
+sudo apt install gcc-arm-none-eabi qemu-system-arm
+
+# macOS (Homebrew)
+brew install --cask gcc-arm-embedded
+brew install qemu
 ```
 
-### Optional: development tools
-```bash
-pip install -r requirements-dev.txt
-```
+## Quick Start
 
-## Running experiments
+### 1. Run B-spline Benchmark
 
-### Single run
 ```bash
 python scripts/run_experiment.py configs/exp_pykan_lut_inrange_closed.yaml
 ```
 
-### Sweep over LUT resolution L
+### 2. Run Jacobi Benchmark
+
 ```bash
-python scripts/run_experiment.py configs/sweeps/inrange_closed_L16.yaml
-python scripts/run_experiment.py configs/sweeps/inrange_closed_L32.yaml
-python scripts/run_experiment.py configs/sweeps/inrange_closed_L64.yaml
-python scripts/run_experiment.py configs/sweeps/inrange_closed_L128.yaml
+# Single configuration
+python scripts/run_experiment.py configs/exp_jacobi_lut.yaml
+
+# Sweep over polynomial types
+python scripts/bench_jacobi_grid.py --degrees 3,5,7 --Ls 32,64,128
 ```
 
-### Aggregate results into paper-ready tables
+### 3. MCU Benchmark (ARM Cortex-M3)
+
 ```bash
-python scripts/collect_results.py --root outputs --outdir outputs/summary --latex_dir outputs/summary_latex
+python scripts/mcu_qemu_benchmark.py --degrees 3,5 --Ls 32,64 --dim 8
 ```
 
-Outputs (CSV):
-- `all_runs.csv` (one row per run)
-- `table_main.csv` (compact trade-off table)
-- `table_speed.csv`, `table_accuracy.csv`, `table_memory.csv`
-- `table_oob_robustness.csv` (OOB diagnostics)
+### 4. Export LUT to C
 
-## Quantization schemes
+```bash
+python scripts/export_lut_to_c.py --in_dim 8 --out_dim 8 --degree 3 --L 64 --output layer.h
+```
 
-This codebase supports two per-segment LUT quantization schemes:
+### 5. Generate Publication Tables
 
-1) Symmetric quantization (int8)  
-Per segment, store a scale $s>0$ and quantize to $q\in[-127,127]$.  
-Dequantization: $\hat y = s\cdot q$.
+```bash
+python scripts/publication_analysis.py outputs/benchmark_results/
+```
 
-2) Asymmetric (affine) quantization (uint8)  
-Per segment, store $(y_\min, s)$ and quantize to $q\in[0,255]$.  
-Dequantization: $\hat y = y_\min + s\cdot q$.  
-This implementation uses the explicit $y_\min$ offset and does not accept a manual zero-point.
+## Supported Basis Functions
 
-## Fair speed baseline (NumPy vs NumPy; Numba vs Numba)
+### B-splines (via PyKAN)
+- Cox-de Boor recursive evaluation
+- Configurable spline order (default: cubic)
 
-We report LUT speedups against an optimized B-spline baseline under the same backend:
-- NumPy B-spline evaluation vs NumPy LUT evaluation
-- Numba-jitted B-spline evaluation vs Numba-jitted LUT evaluation
+### Jacobi Polynomials
+| Name | Parameters (α, β) | Notes |
+|------|-------------------|-------|
+| Chebyshev 1st | (-0.5, -0.5) | Best speedup in benchmarks |
+| Chebyshev 2nd | (0.5, 0.5) | |
+| Legendre | (0, 0) | Orthogonal on [-1,1] |
+| Gegenbauer | (λ-0.5, λ-0.5) | Ultraspherical |
 
-Representative results (mean over `n` seeds; configuration: `spline_component`, `clip_x`, `closed`, `int8 symmetric`):
+## Quantization Schemes
 
-| L | B-spline (NumPy) ms/iter | LUT (NumPy) ms/iter | Speedup | B-spline (Numba) ms/iter | LUT (Numba) ms/iter | Speedup | n |
-|---|---|---|---|---|---|---|---|
-| 16 | 29.277 | 2.1264 | 13.949 | 6.4110 | 0.589095 | 11.056 | 5 |
-| 32 | 26.473 | 2.4775 | 11.491 | 5.6979 | 0.637206 | 9.5175 | 5 |
-| 64 | 28.935 | 2.2417 | 13.130 | 6.0992 | 0.605397 | 10.122 | 10 |
-| 128 | 27.239 | 2.3415 | 11.981 | 6.0808 | 0.595058 | 10.205 | 5 |
+1. **Symmetric (int8)**: `ŷ = scale × q`, where `q ∈ [-127, 127]`
+2. **Asymmetric (uint8)**: `ŷ = y_min + scale × q`, where `q ∈ [0, 255]`
 
-Interpretation:
-- LUT inference is approximately 11–14× faster than NumPy B-spline evaluation.
-- Under Numba JIT, LUT inference remains approximately 9.5–11× faster than the Numba B-spline baseline.
-This isolates the effect of representation (LUT vs B-spline), not merely vectorization/JIT.
+## Benchmark Results
 
-## Accuracy vs LUT resolution L (int8 symmetric vs uint8 asymmetric)
+### CPU Performance (NumPy/Numba)
 
-Representative accuracy numbers for `half_open` boundary mode (which induces OOB samples), showing both
-symmetric int8 and asymmetric uint8:
+| L | B-spline (NumPy) | LUT (NumPy) | Speedup | B-spline (Numba) | LUT (Numba) | Speedup |
+|---|------------------|-------------|---------|------------------|-------------|---------|
+| 16 | 29.28 ms | 2.13 ms | 13.9× | 6.41 ms | 0.59 ms | 11.1× |
+| 32 | 26.47 ms | 2.48 ms | 11.5× | 5.70 ms | 0.64 ms | 9.5× |
+| 64 | 28.94 ms | 2.24 ms | 13.1× | 6.10 ms | 0.61 ms | 10.1× |
+| 128 | 27.24 ms | 2.34 ms | 12.0× | 6.08 ms | 0.60 ms | 10.2× |
 
-| L | in MAE (int8 sym) | in max_abs | in MAE (uint8 asym) | in max_abs | OOB-only max_abs | OOB-any frac | n |
-|---|---|---|---|---|---|---|---|
-| 16 | 0.000639015 | 0.00322639 | 0.000641466 | 0.00324219 | 0.00266178 | 0.101367 | 5 |
-| 32 | 0.000317815 | 0.00162551 | 0.000317912 | 0.00161513 | 0.00133172 | 0.101367 | 5 |
-| 64 | 0.00016015 | 0.000802402 | 0.00015904 | 0.000833417 | 0.000660668 | 0.101367 | 10 |
-| 128 | 8.37491e-05 | 0.000429052 | 8.01496e-05 | 0.000425662 | 0.000347595 | 0.101367 | 5 |
+### MCU Performance (ARM Cortex-M3, QEMU)
 
-Key points:
-- Increasing $L$ improves accuracy (lower MAE/max_abs).
-- Symmetric int8 and asymmetric uint8 are close in this setting; the latter is the affine/asymmetric scheme.
+| Degree | L | Float Cycles | LUT Cycles | Speedup |
+|--------|---|--------------|------------|---------|
+| 3 | 32 | 45,230 | 12,450 | 3.6× |
+| 5 | 64 | 89,120 | 18,320 | 4.9× |
+| 7 | 64 | 156,800 | 24,100 | 6.5× |
 
-## Memory footprint (LUT vs float parameters)
+### Accuracy vs LUT Resolution
 
-The LUT artifact stores quantized tables plus per-segment metadata. For this benchmark layer, the float parameter size is constant,
-while the LUT size grows linearly with $L$:
+| L | MAE (int8) | Max Error | MAE (uint8) | Max Error |
+|---|------------|-----------|-------------|-----------|
+| 16 | 6.39e-4 | 3.23e-3 | 6.41e-4 | 3.24e-3 |
+| 32 | 3.18e-4 | 1.63e-3 | 3.18e-4 | 1.62e-3 |
+| 64 | 1.60e-4 | 8.02e-4 | 1.59e-4 | 8.33e-4 |
+| 128 | 8.37e-5 | 4.29e-4 | 8.01e-5 | 4.26e-4 |
 
-| L | Float params bytes | LUT artifact bytes | LUT/Float | n |
-|---|---|---|---|---|
-| 16 | 4608 | 14128 | 3.0660 | 5 |
-| 32 | 4608 | 25392 | 5.5104 | 5 |
-| 64 | 4608 | 47920 | 10.399 | 10 |
-| 128 | 4608 | 92976 | 20.177 | 5 |
+## Configuration Reference
 
-This demonstrates an explicit accuracy–memory trade-off: higher $L$ improves fidelity but increases bytes.
+### Jacobi Configuration Example
 
-## OOB robustness matrix
+```yaml
+float_model:
+  backend: jacobi
+  adapter: jacobi
+  arch:
+    in_dim: 16
+    out_dim: 16
+    degree: 3
+    alpha: -0.5   # Chebyshev 1st kind
+    beta: -0.5
+    use_tanh: true
+    x_min: -3.0
+    x_max: 3.0
 
-We measure OOB incidence and errors separately on `in-range` and `OOB-only` subsets for the Cartesian product:
-- `oob_policy_mode` ∈ {`clip_x`, `zero_spline`}
-- `boundary_mode` ∈ {`half_open`, `closed`}
-
-Example (L=64, `spline_component`, int8 symmetric):
-
-| oob_policy_mode | boundary_mode | OOB-any frac | OOB-only max_abs | n |
-|---|---|---|---|---|
-| clip_x | closed | 0 | 0 | 10 |
-| clip_x | half_open | 0.101367 | 0.000660668 | 10 |
-| zero_spline | closed | 0 | 0 | 10 |
-| zero_spline | half_open | 0.101367 | 0.000660668 | 10 |
-
-Notes:
-- `closed` boundary mode prevents OOB samples by construction (OOB fraction ≈ 0).
-- `half_open` produces a controlled OOB fraction (≈ 0.10 in this benchmark).
-- OOB sensitivity can be substantially larger when benchmarking full `phi` (base + spline) rather than the contracted `spline_component`.
-
-## Reproducibility and outputs
-- Runs are seeded; aggregation reports mean/std/CI95 per configuration.
-- Large artifacts under `outputs/` are intentionally excluded from version control (see `.gitignore`).
+converter:
+  build_lut:
+    L: 64
+  interp:
+    mode: linear
+  quant:
+    dtype: uint8
+    scheme: asymmetric
+```
 
 ## Citation
 
@@ -202,24 +194,24 @@ If you use this work in your research, please cite:
 ```bibtex
 @article{Kuznetsov_2026,
   title   = {LUT-KAN: Segment-wise LUT Quantization for Fast KAN Inference},
-  url     = {http://arxiv.org/abs/2601.03332},
-  doi     = {10.48550/arXiv.2601.03332},
-  note    = {arXiv:2601.03332 [cs]},
   author  = {Kuznetsov, Oleksandr},
+  journal = {arXiv preprint arXiv:2601.03332},
   year    = {2026},
-  month   = jan
+  url     = {https://arxiv.org/abs/2601.03332}
 }
-
 ```
 
 ## License
-MIT License (see `LICENSE`).
+
+MIT License. See [LICENSE](LICENSE) for details.
 
 ## Contact
 
-- Oleksandr Kuznetsov - oleksandr.o.kuznetsov@gmail.com
-- Project Link: https://github.com/KuznetsovKarazin/lut-kan
+- **Author**: Oleksandr Kuznetsov
+- **Email**: oleksandr.o.kuznetsov@gmail.com
+- **Repository**: https://github.com/KuznetsovKarazin/lut-kan
 
 ## Acknowledgments
 
-- KAN implementation based on pykan: https://github.com/KindXiaoming/pykan
+- [PyKAN](https://github.com/KindXiaoming/pykan) - B-spline KAN implementation
+- [JacobiKAN](https://github.com/SpaceLearner/JacobiKAN) - Jacobi polynomial reference

@@ -1,0 +1,65 @@
+# configs/jacobi_types/exp_jacobi_asymmetric_a2b2.yaml
+# Asymmetric: α = 2β = 2 (i.e., α=2, β=1) - poor per paper Table 3
+_base_: ../spec.yaml
+experiment:
+  name: jacobi_asymmetric_a2b2
+  group: jacobi_types
+  description: "Asymmetric Jacobi (α=2, β=1) - poor performance per paper"
+
+logging:
+  out_dir: outputs/exp_runs/jacobi_types/asymmetric_a2b2
+  versioning: increment
+
+runtime:
+  seed: 4
+  device: cpu
+  num_threads: 1
+  deterministic: true
+
+calibration:
+  num_samples: 2048
+  batch_size: 256
+  inputs:
+    distribution: normal
+    mean: 0.0
+    std: 1.0
+    clip_min: -3.0
+    clip_max: 3.0
+
+float_model:
+  backend: jacobi
+  checkpoint: ""
+  adapter: jacobi
+  arch:
+    in_dim: 16
+    out_dim: 16
+    degree: 3
+    alpha: 2.0
+    beta: 1.0
+    use_tanh: true
+    x_min: -3.0
+    x_max: 3.0
+    num_knots: 9
+
+converter:
+  enabled: true
+  build_lut:
+    L: 64
+    x_range_mode: knots
+  interp:
+    mode: linear
+  oob_policy:
+    mode: clip_x
+  y_range:
+    method: percentile
+    lower_percentile: 0.1
+    upper_percentile: 99.9
+  quant:
+    dtype: uint8
+    scheme: asymmetric
+
+phi_error:
+  enable: true
+
+speed:
+  enable: true

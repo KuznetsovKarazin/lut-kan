@@ -7,6 +7,11 @@ from time import perf_counter
 from types import SimpleNamespace
 from typing import Any, Dict
 import inspect
+import json
+
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import numpy as np
 
@@ -25,6 +30,7 @@ from src.metrics.perf import measure_latency
 from src.metrics.phi_error import evaluate_phi_error_on_grid
 
 from src.models.dummy_adapter import DummyKANAdapter
+from src.models.jacobi_adapter import JacobiKANSingleLayerAdapter
 from src.quant.lut_builder import LUTArtifact
 from src.quant.lut_io import save_lut_npz
 
@@ -267,6 +273,45 @@ def _speed_cfg(cfg) -> SimpleNamespace:
     return sp
 
 
+def _print_results_summary(results: Dict[str, Any]) -> None:
+    """
+    Console-friendly summary (does not affect artifacts).
+    Prints only if meaningful blocks are present.
+    """
+    def _p(title: str, obj: Any) -> None:
+        print(f"\n[RESULTS] {title}")
+        print(json.dumps(obj, indent=2, ensure_ascii=False))
+
+    # Always useful
+    if "experiment" in results:
+        _p("experiment", results["experiment"])
+    if "float_backend" in results:
+        _p("float_backend", results["float_backend"])
+    if "converter_enabled" in results:
+        _p("converter_enabled", results["converter_enabled"])
+
+    # Single-layer pipeline blocks (present for dummy/pykan/jacobi when converter is enabled)
+    for k in ("run_params", "input_sanity", "output_sanity", "phi_error_summary"):
+        if k in results:
+            _p(k, results[k])
+
+    # Memory block
+    if "memory" in results and results["memory"]:
+        _p("memory", results["memory"])
+
+    # Speed block
+    speed_keys = [k for k in ("speed_float", "speed_ref", "speed_dense_numpy", "speed_dense_numba",
+                              "speed_bspline_numpy", "speed_bspline_numba") if k in results]
+    if speed_keys:
+        _p("speed", {k: results.get(k) for k in speed_keys})
+
+    # Optional convenience diffs
+    for k in ("dense_numpy_vs_ref", "numba_vs_ref", "bspline_numpy_vs_float", "bspline_numba_vs_float"):
+        if k in results:
+            _p(k, results[k])
+
+
+
 def _run_single_layer_pipeline(adapter, edges, x, cfg, out_dir: Path, results: Dict[str, Any], label: str) -> None:
     results.setdefault("run_params", {})
     results.setdefault("debug", {})
@@ -374,6 +419,7 @@ def _run_single_layer_pipeline(adapter, edges, x, cfg, out_dir: Path, results: D
                 int(getattr(sp, "measure_iters", 20)),
             )
         dump_json(out_dir / "results.json", results)
+        _print_results_summary(results)
         return
 
     # -------------------------
@@ -624,6 +670,7 @@ def _run_single_layer_pipeline(adapter, edges, x, cfg, out_dir: Path, results: D
     )
 
     dump_json(out_dir / "results.json", results)
+    _print_results_summary(results)
 
 
 def run(config_path: str | Path) -> Path:
@@ -681,6 +728,37 @@ def run(config_path: str | Path) -> Path:
         N = min(4096, max(256, int(cfg.calibration.num_samples)))
         x = rng.normal(size=(N, adapter.in_dim)).astype(np.float32)
         _run_single_layer_pipeline(adapter, edges, x, cfg, out_dir, results, label="dummy")
+        return out_dir
+
+    # -------------------------------------------------------------------------
+    # Jacobi-KAN pipeline (single-layer, torch-free)
+    # -------------------------------------------------------------------------
+    if cfg.float_model.backend in ("jacobi", "jacobikan", "jacobi_kan"):
+        arch = cfg.float_model.arch or {}
+        adapter = JacobiKANSingleLayerAdapter.from_arch(arch=arch, seed=seed)
+        edges = adapter.extract_edges()
+
+        N = int(cfg.calibration.num_samples)
+        inp = _calib_inputs(cfg, raw)
+        dist = str(getattr(inp, "distribution", "normal") or "normal").lower().strip()
+
+        if dist == "uniform":
+            x_min = float(getattr(inp, "x_min", -2.2))
+            x_max = float(getattr(inp, "x_max", 2.2))
+            x = rng.uniform(low=x_min, high=x_max, size=(N, adapter.in_dim)).astype(np.float32)
+        elif dist == "normal":
+            mean = float(getattr(inp, "mean", 0.0))
+            std = float(getattr(inp, "std", 1.0))
+            x = rng.normal(loc=mean, scale=std, size=(N, adapter.in_dim)).astype(np.float32)
+        else:
+            raise ValueError(f"Unsupported calibration.inputs.distribution='{dist}' (use 'normal' or 'uniform').")
+
+        clip_min = getattr(inp, "clip_min", None)
+        clip_max = getattr(inp, "clip_max", None)
+        if clip_min is not None and clip_max is not None:
+            x = np.clip(x, float(clip_min), float(clip_max)).astype(np.float32, copy=False)
+
+        _run_single_layer_pipeline(adapter, edges, x, cfg, out_dir, results, label="jacobi")
         return out_dir
 
     # -------------------------------------------------------------------------

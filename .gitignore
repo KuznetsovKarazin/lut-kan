@@ -46,3 +46,10 @@ tmp/
 # Data (if any)
 data/
 datasets/
+
+# MCU build artifacts
+*.elf
+*.bin
+*.hex
+*.map
+mcu_build/

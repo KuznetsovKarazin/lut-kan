@@ -24,6 +24,9 @@ dev = [
   "pytest>=7.4",
   "ruff>=0.5",
 ]
+mcu = [
+  "matplotlib>=3.7",  
+]
 numba = [
   "numba>=0.58",
 ]
