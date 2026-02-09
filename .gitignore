@@ -53,3 +53,41 @@ datasets/
 *.hex
 *.map
 mcu_build/
+
+# ===================================================================
+# MCU Auto-Benchmark artifacts
+# ===================================================================
+
+# Generated test cases (can be regenerated from grids)
+mcu_auto/cases/
+mcu_auto/hw_cases/
+
+# Simulation and hardware logs
+mcu_auto/logs/
+mcu_auto/hw_logs/
+
+# Generated reports (regenerate from collect_results.py)
+mcu_auto/reports/summary.csv
+mcu_auto/reports/summary.md
+mcu_auto/reports/figures/*.png
+mcu_auto/reports_hw/
+
+# PlatformIO build artifacts
+.pio/
+*.pio/
+.pioenvs/
+.piolibdeps/
+
+# Firmware binaries
+*.elf
+*.bin
+*.hex
+*.map
+
+# Wokwi temporary files
+.wokwi/
+
+# Python cache in mcu_auto
+mcu_auto/__pycache__/
+mcu_auto/**/__pycache__/
+mcu_auto/**/*.pyc

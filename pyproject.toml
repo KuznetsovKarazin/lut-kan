@@ -25,7 +25,10 @@ dev = [
   "ruff>=0.5",
 ]
 mcu = [
-  "matplotlib>=3.7",  
+  "matplotlib>=3.7",
+  "seaborn>=0.12",
+  "platformio>=6.1",
+  "pyserial>=3.5",
 ]
 numba = [
   "numba>=0.58",
@@ -34,6 +37,23 @@ pykan = [
   "torch>=2.1",
   "kan",
 ]
+all = [
+  "matplotlib>=3.7",
+  "seaborn>=0.12",
+  "platformio>=6.1",
+  "pyserial>=3.5",
+  "numba>=0.58",
+  "torch>=2.1",
+  "kan",
+  "pytest>=7.4",
+  "ruff>=0.5",
+]
+
+# Installation examples:
+# pip install -e .                    # Core only
+# pip install -e ".[mcu]"             # Core + MCU tools
+# pip install -e ".[mcu,numba]"       # Core + MCU + Numba acceleration
+# pip install -e ".[all]"             # Everything
 
 [project.scripts]
 lut-kan-run = "scripts.run_experiment:main"

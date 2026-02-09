@@ -1,0 +1,27 @@
+# MCU Auto Benchmark Requirements
+# Install after main requirements.txt
+#
+# Installation:
+#   pip install -r requirements.txt
+#   pip install -r requirements-mcu.txt
+
+# Base dependencies (should already be installed from requirements.txt)
+numpy>=1.24
+pyyaml>=6.0
+
+# MCU-specific build tools
+platformio>=6.1.0
+
+# Serial communication for hardware runs
+pyserial>=3.5
+
+# Visualization and reporting
+matplotlib>=3.7
+seaborn>=0.12
+
+# Optional: for advanced statistical analysis
+scipy>=1.10
+
+# Note: Wokwi CLI is installed via npm, not pip:
+#   npm install -g @anthropic-ai/wokwi-cli
+# See mcu_auto/docs/README_MCU.md for complete setup instructions

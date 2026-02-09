@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "author": "lut-kan mcu_auto",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-stm32-bluepill", "id": "stm32", "top": 0, "left": 0, "attrs": {} }
+  ],
+  "connections": [
+    [ "stm32:A10", "$serialMonitor:TX", "green", [] ],
+    [ "stm32:A9", "$serialMonitor:RX", "green", [] ]
+  ]
+}

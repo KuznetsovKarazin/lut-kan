@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\caption{LUT-KAN inference speedup across MCU platforms.}
+\label{tab:mcu_speedup}
+\begin{tabular}{llrrrr}
+\toprule
+Target & Basis & $N$ & Med.\ $\times$ & Max $\times$ & Med.\ Err \\
+\midrule
+esp32c3 & bspline & 16 & 15.6$\times$ & 22.3$\times$ & 0.067 \\
+esp32c3 & jacobi & 48 & 4.4$\times$ & 7.4$\times$ & 0.103 \\
+mega & bspline & 8 & 23.8$\times$ & 27.2$\times$ & 0.051 \\
+mega & jacobi & 48 & 4.8$\times$ & 9.0$\times$ & 0.103 \\
+pico & bspline & 12 & 20.0$\times$ & 28.6$\times$ & 0.061 \\
+pico & jacobi & 48 & 4.1$\times$ & 7.0$\times$ & 0.103 \\
+stm32f103 & bspline & 1 & 13.6$\times$ & 13.6$\times$ & 0.076 \\
+stm32f103 & jacobi & 24 & 3.9$\times$ & 6.3$\times$ & 0.122 \\
+\bottomrule
+\end{tabular}
+\end{table}

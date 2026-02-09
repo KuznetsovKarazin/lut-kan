@@ -1,0 +1,141 @@
+# ---------------------------------------------------------------------------
+# LUT-KAN MCU Benchmark Grid
+# ---------------------------------------------------------------------------
+# basis_type: "jacobi" uses Jacobi polynomial recurrence (Chebyshev, Legendre, etc.)
+#             "bspline" uses Cox-de Boor B-spline basis (cubic by default)
+#
+# For Jacobi: poly_family selects (alpha,beta) mapping:
+#   chebyshev_t  -> (-0.5, -0.5)
+#   legendre     -> (0.0, 0.0)
+#   gegenbauer_X -> (X-0.5, X-0.5)
+#
+# For B-spline: degree is the spline order (typically 3 = cubic),
+#   grid_points is the number of interior knots (num_coef = grid_points + degree - 1)
+# ---------------------------------------------------------------------------
+
+base:
+  seed: 42
+
+  # Benchmark harness
+  iters: 300
+  repeats: 7
+  warmup: 20
+  input_mode: linspace
+
+  # Model domain / pre-processing
+  use_tanh: true
+  clip_x: true
+  x_min: -3.0
+  x_max: 3.0
+
+  # Jacobi defaults
+  alpha: -0.5
+  beta: -0.5
+  poly_family: chebyshev_t
+
+  # B-spline defaults
+  bspline_degree: 3
+  grid_points: 5
+  base_kind: silu
+
+suites:
+  # -----------------------------------------------------------------------
+  # Fast CI / pre-commit: small but representative
+  # -----------------------------------------------------------------------
+  smoke:
+    in_dim: [4, 8]
+    out_dim: [4, 8]
+    basis_type: [jacobi, bspline]
+    # Jacobi params (ignored for bspline)
+    poly_family: [chebyshev_t]
+    degree: [3, 5, 8, 12, 16, 20]
+    # B-spline params (ignored for jacobi)
+    bspline_degree: [3]
+    grid_points: [5, 8]
+    # LUT params (shared)
+    L: [16, 32]
+    segments: [8]
+    interp: [linear]
+    scheme: [uint8_asymm]
+    input_mode: [linspace]
+    iters: [200]
+    repeats: [5]
+
+  # -----------------------------------------------------------------------
+  # Incremental: only new degree points (run with --skip-existing)
+  # -----------------------------------------------------------------------
+  extra_degrees:
+    in_dim: [4, 8]
+    out_dim: [4, 8]
+    basis_type: [jacobi]
+    poly_family: [chebyshev_t]
+    degree: [16, 20]
+    L: [16, 32]
+    segments: [8]
+    interp: [linear]
+    scheme: [uint8_asymm]
+    input_mode: [linspace]
+    iters: [200]
+    repeats: [5]
+
+  # -----------------------------------------------------------------------
+  # STM32-lightweight: reduced iters to fit Wokwi stability window
+  # Wokwi STM32 simulation drops WebSocket (code 1006) on long runs.
+  # 30 iters × 3 repeats ≈ 6× less work than smoke suite.
+  # -----------------------------------------------------------------------
+  stm32_light:
+    in_dim: [4, 8]
+    out_dim: [4, 8]
+    basis_type: [jacobi, bspline]
+    poly_family: [chebyshev_t]
+    degree: [3, 5, 8, 12, 16, 20]
+    bspline_degree: [3]
+    grid_points: [5, 8]
+    L: [16, 32]
+    segments: [8]
+    interp: [linear]
+    scheme: [uint8_asymm]
+    input_mode: [linspace]
+    iters: [30]
+    repeats: [3]
+
+  # -----------------------------------------------------------------------
+  # Research sweep: broad coverage but still bounded
+  # -----------------------------------------------------------------------
+  full:
+    in_dim: [8, 16]
+    out_dim: [8, 16]
+    basis_type: [jacobi, bspline]
+    # Jacobi params
+    poly_family: [chebyshev_t, legendre, gegenbauer_1_0]
+    degree: [3, 5, 8, 10]
+    # B-spline params
+    bspline_degree: [3]
+    grid_points: [5, 8, 12]
+    # LUT params
+    L: [16, 32, 64, 128]
+    segments: [4, 8, 12]
+    interp: [nearest, linear]
+    scheme: [uint8_asymm, int8_symm]
+    input_mode: [linspace, rng_uniform]
+    iters: [300]
+    repeats: [7]
+
+  # -----------------------------------------------------------------------
+  # Stress sweep: use sparingly (nightly or manual)
+  # -----------------------------------------------------------------------
+  stress:
+    in_dim: [32]
+    out_dim: [32]
+    basis_type: [jacobi, bspline]
+    poly_family: [chebyshev_t]
+    degree: [5, 10, 16]
+    bspline_degree: [3, 5]
+    grid_points: [8, 16]
+    L: [64, 128, 256]
+    segments: [8, 16]
+    interp: [linear]
+    scheme: [uint8_asymm]
+    input_mode: [rng_uniform, rng_gauss]
+    iters: [200]
+    repeats: [9]

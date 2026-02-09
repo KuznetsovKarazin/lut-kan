@@ -1,0 +1,3 @@
+[wokwi]
+version = 1
+firmware = ".pio/build/mcu/firmware.elf"
