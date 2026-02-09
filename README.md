@@ -80,7 +80,7 @@ cat reports/summary.md
 - `esp32s3` - ESP32-S3 (Xtensa LX7, **with FPU**)
 - `stm32f103` - Blue Pill (ARM Cortex-M3)
 
-All targets verified against [Wokwi's supported hardware](https://docs.wokwi.com/parts/board-list).
+All targets verified against [Wokwi's supported hardware](https://docs.wokwi.com/getting-started/supported-hardware).
 
 ## Directory Structure
 
