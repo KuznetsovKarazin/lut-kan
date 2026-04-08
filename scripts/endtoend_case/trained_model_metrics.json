@@ -1,0 +1,18 @@
+{
+  "task": "sine_regression",
+  "target_function": "sin(2*pi*x) + 0.5*sin(4*pi*x)",
+  "model": "ChebyshevKAN [1\u21921], degree=16",
+  "n_train": 500,
+  "n_test": 200,
+  "degree": 16,
+  "L": 32,
+  "segments": 16,
+  "float_train_mse": 3.524223939166404e-05,
+  "float_test_mse": 0.00014448277943301946,
+  "lut_vs_float_max_err": 0.012773849070072174,
+  "lut_vs_float_mse": 1.2558379012261867e-06,
+  "lut_vs_ground_truth_mse": 0.00016170427261386067,
+  "accuracy_loss_mse": 1.7221493180841208e-05,
+  "lut_flash_bytes": 640,
+  "float_coefficients_bytes": 68
+}

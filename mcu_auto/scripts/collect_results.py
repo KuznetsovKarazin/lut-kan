@@ -82,7 +82,15 @@ def write_csv(rows: List[Dict[str, Any]], out_csv: Path) -> None:
         "bspline_degree", "grid_points", "num_coef",
         "t_float_us", "t_lut_us",
         "t_float_min_us", "t_float_max_us", "t_lut_min_us", "t_lut_max_us",
+        # v2 fixed-point LUT
+        "t_lut_fp_us", "t_lut_fp_min_us", "t_lut_fp_max_us",
+        "speedup_fp", "max_abs_err_fp",
+        # v2 quant-only ablation (Jacobi only)
+        "t_qonly_us", "t_qonly_min_us", "t_qonly_max_us",
+        "qonly_speedup", "qonly_max_err",
+        # original
         "speedup", "max_abs_err",
+        "lut_flash_bytes",
         "flash_bytes", "ram_bytes", "pio_version",
         "status", "log"
     ]
@@ -99,9 +107,12 @@ def write_md(rows: List[Dict[str, Any]], out_md: Path) -> None:
 
     # Median speedup per (target, basis_type)
     by_group: Dict[str, List[float]] = {}
+    by_group_fp: Dict[str, List[float]] = {}
     for r in ok:
         key = f"{r.get('target', '?')} / {r.get('basis_type', '?')}"
         by_group.setdefault(key, []).append(float(r["speedup"]))
+        if isinstance(r.get("speedup_fp"), (int, float)):
+            by_group_fp.setdefault(key, []).append(float(r["speedup_fp"]))
 
     lines: List[str] = []
     lines.append("# MCU LUT-KAN benchmark summary\n")
@@ -109,9 +120,28 @@ def write_md(rows: List[Dict[str, Any]], out_md: Path) -> None:
 
     if by_group:
         lines.append("## Median speedup by target / basis type\n")
-        lines.append("| target / basis | n | median speedup |\n|---|---:|---:|")
+        lines.append("| target / basis | n | median speedup | median speedup_fp |")
+        lines.append("|---|---:|---:|---:|")
         for key, vals in sorted(by_group.items()):
-            lines.append(f"| {key} | {len(vals)} | {median(vals):.3f} |")
+            fp_vals = by_group_fp.get(key, [])
+            fp_str = f"{median(fp_vals):.3f}" if fp_vals else "—"
+            lines.append(f"| {key} | {len(vals)} | {median(vals):.3f} | {fp_str} |")
+        lines.append("")
+
+    # Quant-only ablation summary (Jacobi only)
+    qonly_ok = [r for r in ok if isinstance(r.get("qonly_speedup"), (int, float)) and r.get("basis_type") == "jacobi"]
+    if qonly_ok:
+        lines.append("## Quant-only ablation (Jacobi) — proves speedup comes from LUT, not quantization\n")
+        by_target_q: Dict[str, List[float]] = {}
+        for r in qonly_ok:
+            t = r.get("target", "?")
+            by_target_q.setdefault(t, []).append(float(r["qonly_speedup"]))
+        lines.append("| target | n | median qonly_speedup | interpretation |")
+        lines.append("|---|---:|---:|---|")
+        for t, vals in sorted(by_target_q.items()):
+            med = median(vals)
+            interp = "≈1.0 → recurrence dominates" if 0.8 <= med <= 1.2 else "<1.0 → quant overhead" if med < 0.8 else ">1.0 → unexpected"
+            lines.append(f"| {t} | {len(vals)} | {med:.3f} | {interp} |")
         lines.append("")
 
     ok_sorted = sorted(ok, key=lambda r: float(r["speedup"]))
