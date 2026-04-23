@@ -3,4 +3,4 @@ pytest-cov>=4.1
 ruff>=0.3.0
 mypy>=1.8
 pre-commit>=3.6
-types-PyYAML>=6.0.12.20241230
+types-PyYAML>=6.0.12.20260408
