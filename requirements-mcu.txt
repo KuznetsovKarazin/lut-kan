@@ -20,7 +20,7 @@ matplotlib>=3.7
 seaborn>=0.12
 
 # Optional: for advanced statistical analysis
-scipy>=1.10
+scipy>=1.15.3
 
 # Note: Wokwi CLI is installed via npm, not pip:
 #   npm install -g @anthropic-ai/wokwi-cli
