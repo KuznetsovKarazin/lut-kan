@@ -9,5 +9,5 @@ numba>=0.59
 
 # Optional reference (PyKAN)
 torch>=2.1
-kan>=0.0.0
+kan>=0.0.2
 scipy>=1.10
