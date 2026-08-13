@@ -1,6 +1,6 @@
 _base_: exp_pykan_lut.yaml
 
-calibration:
+evaluation_inputs:
   inputs:
     distribution: normal
     mean: 0.0

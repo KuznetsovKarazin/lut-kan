@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
+import warnings
 
 import numpy as np
 
@@ -166,6 +167,17 @@ def pack_dense_layer(
     K = int(knots.size - 1)
     x_min = float(knots[0])
     x_max = float(knots[-1])
+
+    # Sampling-grid contract.  Current runtimes use pos=u*(L-1), therefore
+    # newly reported artifacts must be built on an endpoint-inclusive grid.
+    sample_grid = str(getattr(art, "sample_grid", "legacy_half_open"))
+    if sample_grid != "endpoint_inclusive":
+        warnings.warn(
+            "Packing a legacy LUT artifact whose sampling grid is not endpoint-inclusive. "
+            "Rebuild the artifact with the current builder before reporting numerical results.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
 
     # Table params
     L = int(art.L)

@@ -26,7 +26,7 @@ converter:
     dtype: "uint8"
     scheme: "asymmetric"
 
-calibration:
+evaluation_inputs:
   num_samples: 4096
 
 logging:

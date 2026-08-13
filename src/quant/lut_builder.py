@@ -13,6 +13,7 @@ OOBBehavior = Literal["clip", "zero"]  # semantic OOB behavior for LUT value (NO
 QuantDType = Literal["uint8", "int8"]
 QuantScheme = Literal["asymmetric", "symmetric"]
 BoundaryMode = Literal["half_open", "closed"]  # domain membership definition
+SampleGrid = Literal["endpoint_inclusive", "legacy_half_open"]
 
 
 @dataclass
@@ -79,13 +80,32 @@ class LUTArtifact:
     edge_spline_scale: Optional[np.ndarray] = None # float32 [E]
     edge_out_scale: Optional[np.ndarray] = None    # float32 [E]
 
+    # Sampling convention encoded by format_version >= 2.
+    # Each segment stores L samples including both knot endpoints.
+    sample_grid: SampleGrid = "endpoint_inclusive"
+
 
 
 def build_segment_grid(knots: np.ndarray, L: int) -> np.ndarray:
-    """
-    Build sample grid within each segment.
-    Returns x_grid [K, L] where K = len(knots) - 1.
-    Uses a half-open sampling convention inside segments to avoid hitting exact right boundaries.
+    """Build the per-segment LUT sampling grid.
+
+    Returns
+    -------
+    x_grid : np.ndarray, shape [K, L]
+        ``K = len(knots) - 1`` segments, with ``L`` samples per segment.
+
+    Sampling contract
+    -----------------
+    Samples include *both* endpoints of every knot interval::
+
+        x[k, l] = t[k] + l/(L-1) * (t[k+1] - t[k]),
+        l = 0, ..., L-1.
+
+    This is intentionally independent of ``boundary_mode``.  Boundary mode
+    defines whether an input belongs to the global LUT domain; it does not
+    change the geometry of samples stored inside a segment.  The endpoint-
+    inclusive grid matches the runtime interpolation coordinate
+    ``pos = u * (L - 1)`` used by all LUT backends.
     """
     knots = np.asarray(knots, dtype=np.float32)
     if knots.ndim != 1 or knots.size < 2:
@@ -95,14 +115,12 @@ def build_segment_grid(knots: np.ndarray, L: int) -> np.ndarray:
 
     K = knots.size - 1
     x_grid = np.empty((K, L), dtype=np.float32)
+    alpha = np.linspace(0.0, 1.0, num=L, endpoint=True, dtype=np.float32)
 
     for k in range(K):
-        a = float(knots[k])
-        b = float(knots[k + 1])
-        # sample L points in [a, b) (half-open) to avoid boundary ambiguity
-        # step = (b-a)/L, points: a + step * (0..L-1)
-        step = (b - a) / float(L)
-        x_grid[k, :] = a + step * np.arange(L, dtype=np.float32)
+        a = np.float32(knots[k])
+        b = np.float32(knots[k + 1])
+        x_grid[k, :] = a + (b - a) * alpha
 
     return x_grid
 
@@ -165,8 +183,12 @@ def build_lut_for_edges(
           edge.eval_spline(x) exists and coefficients are present:
             edge.sb (base_scale), edge.ss (spline_scale), edge.m (out_scale), edge.base_kind
 
-    Note: oob_behavior is stored for runtime; it does not affect LUT sampling since LUT is sampled
-    exactly on the knot-defined grid.
+    Notes
+    -----
+    ``oob_behavior`` is stored for runtime; it does not affect LUT sampling.
+    LUT quantization itself does not require an external calibration dataset:
+    per-segment quantization ranges are derived deterministically from the
+    sampled LUT values (or their configured percentiles).
     """
     if not edges:
         raise ValueError("edges must be non-empty")
@@ -262,7 +284,7 @@ def build_lut_for_edges(
             edge_out_scale[ei] = float(mm)
 
     return LUTArtifact(
-        format_version=1,
+        format_version=2,
         knots=knots,
         L=int(L),
         interp=interp,

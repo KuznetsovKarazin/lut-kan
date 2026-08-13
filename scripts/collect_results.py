@@ -43,7 +43,13 @@ def infer_run_params(j: Dict[str, Any]) -> Dict[str, Any]:
     out.setdefault("oob_policy_mode", safe_get(j, "run_semantics.oob_policy_mode", None))
     out.setdefault("boundary_mode", safe_get(j, "run_semantics.boundary_mode", None))
     out.setdefault("value_representation", safe_get(j, "run_semantics.value_representation", None))
-    out.setdefault("seed", safe_get(j, "calibration.seed", None))
+    out.setdefault(
+        "seed",
+        out.get(
+            "runtime_seed",
+            safe_get(j, "evaluation_inputs.seed", safe_get(j, "calibration.seed", None)),
+        ),
+    )
 
     return out
 

@@ -32,7 +32,7 @@ float_model:
     device: cpu
     call_speed: true
 
-calibration:
+evaluation_inputs:
   source_split: train
   num_samples: 1024
   inputs:

@@ -50,20 +50,56 @@ class DatasetConfig(BaseModel):
     preprocess: DatasetPreprocessConfig = Field(default_factory=DatasetPreprocessConfig)
 
 
-class CalibrationConfig(BaseModel):
+class EvaluationInputGenerationConfig(BaseModel):
+    distribution: Literal["normal", "uniform"] = "normal"
+    mean: float = 0.0
+    std: float = 1.0
+    x_min: float = -2.2
+    x_max: float = 2.2
+    clip_min: Optional[float] = None
+    clip_max: Optional[float] = None
+
+    @model_validator(mode="after")
+    def _valid_distribution_params(self):
+        if self.std <= 0:
+            raise ValueError("evaluation_inputs.inputs.std must be > 0")
+        if self.x_max <= self.x_min:
+            raise ValueError("evaluation_inputs.inputs.x_max must be > x_min")
+        if (self.clip_min is None) != (self.clip_max is None):
+            raise ValueError("evaluation_inputs.inputs.clip_min and clip_max must be set together")
+        if self.clip_min is not None and self.clip_max is not None and self.clip_max <= self.clip_min:
+            raise ValueError("evaluation_inputs.inputs.clip_max must be > clip_min")
+        return self
+
+
+class EvaluationInputsConfig(BaseModel):
+    """Inputs used to evaluate approximation, OOB behavior, and latency.
+
+    These samples are *not* used to calibrate LUT quantization ranges.  The
+    current per-segment LUT quantizers derive their ranges directly from the
+    sampled LUT values.
+    """
+    model_config = ConfigDict(extra="allow")
+
     source_split: Literal["train", "val"] = "train"
     num_samples: int = 1024
     batch_size: int = 32
     sampling: Literal["random", "first", "stratified"] = "random"
     seed: int = 42
+    inputs: EvaluationInputGenerationConfig = Field(default_factory=EvaluationInputGenerationConfig)
 
     @model_validator(mode="after")
     def _positive(self):
         if self.num_samples <= 0:
-            raise ValueError("calibration.num_samples must be > 0")
+            raise ValueError("evaluation_inputs.num_samples must be > 0")
         if self.batch_size <= 0:
-            raise ValueError("calibration.batch_size must be > 0")
+            raise ValueError("evaluation_inputs.batch_size must be > 0")
         return self
+
+
+# Backward-compatible import alias.  New code/configuration should use
+# EvaluationInputsConfig / evaluation_inputs.
+CalibrationConfig = EvaluationInputsConfig
 
 
 class FloatModelConfig(BaseModel):
@@ -282,7 +318,9 @@ class RootConfig(BaseModel):
     experiment: ExperimentConfig
     runtime: RuntimeConfig = Field(default_factory=RuntimeConfig)
     dataset: DatasetConfig
-    calibration: CalibrationConfig = Field(default_factory=CalibrationConfig)
+    evaluation_inputs: EvaluationInputsConfig = Field(default_factory=EvaluationInputsConfig)
+    # Deprecated YAML alias retained so old experiment files remain runnable.
+    calibration: Optional[EvaluationInputsConfig] = Field(default=None, exclude=True)
     float_model: FloatModelConfig
     training: TrainingConfig = Field(default_factory=TrainingConfig)
     converter: ConverterConfig = Field(default_factory=ConverterConfig)
@@ -291,6 +329,14 @@ class RootConfig(BaseModel):
     logging: LoggingConfig = Field(default_factory=LoggingConfig)
     debug: DebugConfig = Field(default_factory=DebugConfig)
     validation: ValidationConfig = Field(default_factory=ValidationConfig)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _migrate_legacy_calibration_name(cls, data):
+        if isinstance(data, dict) and "evaluation_inputs" not in data and "calibration" in data:
+            data = dict(data)
+            data["evaluation_inputs"] = data["calibration"]
+        return data
 
     @model_validator(mode="after")
     def _mvp_rules(self):

@@ -24,18 +24,16 @@ def _env_with_pythonpath() -> dict:
 
 
 def _absolutize_base_paths(cfg: dict) -> dict:
-    """
-    Your loader resolves 'base:' relative to the config file location.
-    When we emit tmp YAML elsewhere, relative base breaks.
+    """Make ``_base_`` robust when a sweep emits temporary YAML elsewhere.
 
-    Fix: if cfg['base'] is relative, convert it to an absolute path relative to configs/.
+    ``load_config`` resolves a relative ``_base_`` against the directory of the
+    YAML file being loaded.  Sweep configs are written under ``outputs/``, so a
+    relative ``_base_: spec.yaml`` would otherwise point to the wrong place.
     """
-    if isinstance(cfg, dict) and "base" in cfg and isinstance(cfg["base"], str):
-        base_path = Path(cfg["base"])
+    if isinstance(cfg, dict) and "_base_" in cfg and isinstance(cfg["_base_"], str):
+        base_path = Path(cfg["_base_"])
         if not base_path.is_absolute():
-            # interpret relative 'base' exactly as when exp_pykan_lut.yaml is in configs/
-            abs_base = (CONFIGS_DIR / base_path).resolve()
-            cfg["base"] = str(abs_base)
+            cfg["_base_"] = str((CONFIGS_DIR / base_path).resolve())
     return cfg
 
 

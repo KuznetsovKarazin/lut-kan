@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Dict
+import warnings
 
 import numpy as np
 
@@ -33,6 +34,7 @@ def save_lut_npz(path: str | Path, art: LUTArtifact) -> None:
 
         value_representation=np.asarray(art.value_representation),
         base_kind=np.asarray(art.base_kind),
+        sample_grid=np.asarray(getattr(art, "sample_grid", "endpoint_inclusive")),
 
         edge_base_scale=(art.edge_base_scale if art.edge_base_scale is not None else np.array([], dtype=np.float32)),
         edge_spline_scale=(art.edge_spline_scale if art.edge_spline_scale is not None else np.array([], dtype=np.float32)),
@@ -77,6 +79,23 @@ def load_lut_npz(path: str | Path) -> LUTArtifact:
 
         value_representation = str(np.asarray(data["value_representation"]).item())
         base_kind = str(np.asarray(_get(data, "base_kind", np.asarray("none"))).item())
+        sample_grid = str(
+            np.asarray(
+                _get(
+                    data,
+                    "sample_grid",
+                    np.asarray("endpoint_inclusive" if format_version >= 2 else "legacy_half_open"),
+                )
+            ).item()
+        )
+
+        if format_version < 2 or sample_grid != "endpoint_inclusive":
+            warnings.warn(
+                "Loaded a legacy LUT artifact built with the pre-v2 endpoint sampling contract. "
+                "Rebuild the LUT artifact with the current builder before reporting numerical results.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
 
         ebs = np.asarray(_get(data, "edge_base_scale", np.array([], dtype=np.float32)), dtype=np.float32)
         ess = np.asarray(_get(data, "edge_spline_scale", np.array([], dtype=np.float32)), dtype=np.float32)
@@ -105,9 +124,16 @@ def load_lut_npz(path: str | Path) -> LUTArtifact:
             edge_base_scale=edge_base_scale,
             edge_spline_scale=edge_spline_scale,
             edge_out_scale=edge_out_scale,
+            sample_grid=sample_grid,  # type: ignore[arg-type]
         )
 
     # Legacy load path
+    warnings.warn(
+        "Loaded a legacy LUT artifact without an explicit sampling-grid contract. "
+        "Rebuild the LUT artifact with the current builder before reporting numerical results.",
+        RuntimeWarning,
+        stacklevel=2,
+    )
     knots = np.asarray(data["knots"], dtype=np.float32)
     L = int(np.asarray(data["L"]).item())
 
@@ -164,4 +190,5 @@ def load_lut_npz(path: str | Path) -> LUTArtifact:
         edge_base_scale=edge_base_scale,
         edge_spline_scale=edge_spline_scale,
         edge_out_scale=edge_out_scale,
+        sample_grid="legacy_half_open",
     )

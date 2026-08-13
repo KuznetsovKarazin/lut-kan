@@ -1,5 +1,5 @@
 _base_: exp_pykan_lut.yaml
-calibration:
+evaluation_inputs:
   inputs:
     distribution: normal
     mean: 0.0
@@ -9,6 +9,6 @@ calibration:
 converter:
   oob_policy:
     mode: zero_spline
-    boundary: half_open 
+    boundary: half_open
 experiment:
   name: exp_pykan_lut_inrange_closed.yaml

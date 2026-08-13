@@ -1,0 +1,95 @@
+_base_: spec.yaml
+
+experiment:
+  name: ncaa_r1_controlled
+  group: ncaa_r1
+  description: "NCA R1 controlled B-spline vs endpoint-inclusive LUT benchmark"
+
+runtime:
+  seed: 0
+  device: cpu
+  num_threads: 1
+  deterministic: true
+
+float_model:
+  backend: pykan
+  checkpoint: ""
+  adapter: "src.models.kan_wrapper:PyKANSingleLayerAdapter"
+  arch:
+    width: [10, 8]
+    grid: 8
+    k: 3
+    seed: 0
+    device: cpu
+
+# These are evaluation/benchmark inputs, not quantization-calibration data.
+# For PyKAN grid=8, k=3, default grid_range=[-1,1], the augmented knot
+# domain is [-1.75, 1.75].  Clipping reproduces the in-range protocol.
+evaluation_inputs:
+  source_split: train
+  num_samples: 1024
+  batch_size: 1024
+  sampling: random
+  seed: 0
+  inputs:
+    distribution: normal
+    mean: 0.0
+    std: 1.0
+    clip_min: -1.75
+    clip_max: 1.75
+
+converter:
+  enabled: true
+  value_representation: spline_component
+  build_lut:
+    L: 64
+    knots_source: model
+    x_range_mode: knots
+  oob_policy:
+    mode: clip_x
+    boundary: closed
+  interp:
+    mode: linear
+  # The paper's affine formulas use the actual sampled LUT extrema.
+  y_range:
+    method: minmax
+    lower_percentile: 0.0
+    upper_percentile: 100.0
+  quant:
+    dtype: int8
+    scheme: symmetric
+    qmin: -127
+    qmax: 127
+    zero_point: 0
+    per_segment: true
+    meta_dtype: float16
+
+inference:
+  batch_size: 1024
+  enable_batching: true
+  accumulation: fp32
+
+evaluation:
+  extra:
+    phi_error:
+      enable: true
+      metrics: [mae, rmse, max_abs]
+      per_segment: true
+      report_topk_functions: 3
+    speed:
+      enable: true
+      warmup_iters: 10
+      measure_iters: 100
+    memory:
+      enable: true
+      breakdown: true
+
+logging:
+  out_dir: outputs/ncaa_r1_controlled/base
+  versioning: increment
+  artifact_format: npz
+  save_artifact: true
+  save_predictions: false
+  save_plots: false
+  save_intermediate: false
+  verbose: true

@@ -14,7 +14,7 @@ runtime:
   num_threads: 1
   deterministic: true
 
-calibration:
+evaluation_inputs:
   num_samples: 2048
   batch_size: 256
   inputs:

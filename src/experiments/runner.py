@@ -61,23 +61,28 @@ except Exception as e:
     warmup_bspline_numba = None
 
 
-def _calib_inputs(cfg, raw: dict | None) -> SimpleNamespace:
+def _evaluation_inputs(cfg, raw: dict | None) -> SimpleNamespace:
     """
-    Return calibration.inputs as an object with attributes.
+    Return evaluation input-generation settings as an object with attributes.
+
+    These inputs are used for approximation/OOB/latency evaluation; they are
+    not used to determine LUT quantization ranges.
 
     Priority:
-      1) validated cfg.calibration.inputs (if schema supports it)
-      2) raw['calibration']['inputs'] (from resolved_config dump)
-      3) empty object (defaults via getattr)
+      1) validated cfg.evaluation_inputs.inputs
+      2) raw['evaluation_inputs']['inputs']
+      3) legacy raw['calibration']['inputs']
+      4) empty object (defaults via getattr)
     """
-    inp = getattr(getattr(cfg, "calibration", None), "inputs", None)
+    inp = getattr(getattr(cfg, "evaluation_inputs", None), "inputs", None)
     if inp is not None:
-        return inp  # already a pydantic object or SimpleNamespace-like
+        return inp
 
     if isinstance(raw, dict):
-        d = (raw.get("calibration") or {}).get("inputs", None)
-        if isinstance(d, dict):
-            return SimpleNamespace(**d)
+        for key in ("evaluation_inputs", "calibration"):
+            d = (raw.get(key) or {}).get("inputs", None)
+            if isinstance(d, dict):
+                return SimpleNamespace(**d)
 
     return SimpleNamespace()
 
@@ -621,8 +626,8 @@ def _run_single_layer_pipeline(adapter, edges, x, cfg, out_dir: Path, results: D
         pass
 
     # Run params (contract + provenance)
-    inp_raw = results.get("_raw_calibration_inputs", None)
-    inp = _calib_inputs(cfg, {"calibration": {"inputs": inp_raw}} if isinstance(inp_raw, dict) else None)
+    inp_raw = results.get("_raw_evaluation_inputs", None)
+    inp = _evaluation_inputs(cfg, {"evaluation_inputs": {"inputs": inp_raw}} if isinstance(inp_raw, dict) else None)
 
     dist = str(getattr(inp, "distribution", "normal") or "normal").lower().strip()
     clip_min = getattr(inp, "clip_min", None)
@@ -637,6 +642,8 @@ def _run_single_layer_pipeline(adapter, edges, x, cfg, out_dir: Path, results: D
         {
             "label": str(label),
             "N": int(x.shape[0]),
+            "runtime_seed": int(getattr(cfg.runtime, "seed", 0)),
+            "evaluation_input_seed": int(getattr(cfg.evaluation_inputs, "seed", 42)),
             "in_dim": int(adapter.in_dim),
             "out_dim": int(adapter.out_dim),
             "edges": int(len(edges)),
@@ -705,8 +712,8 @@ def run(config_path: str | Path) -> Path:
         "converter_enabled": bool(cfg.converter.enabled),
     }
 
-    # keep raw calibration.inputs for logging even if cfg schema ignores it
-    results["_raw_calibration_inputs"] = (raw.get("calibration") or {}).get("inputs", None) if isinstance(raw, dict) else None
+    # Keep raw evaluation input-generation settings for provenance; accept legacy calibration.inputs.
+    results["_raw_evaluation_inputs"] = (raw.get("evaluation_inputs") or raw.get("calibration") or {}).get("inputs", None) if isinstance(raw, dict) else None
 
     seed = int(getattr(cfg.runtime, "seed", 0))
     rng = np.random.default_rng(seed)
@@ -725,7 +732,7 @@ def run(config_path: str | Path) -> Path:
             seed=seed,
         )
         edges = adapter.extract_edges()
-        N = min(4096, max(256, int(cfg.calibration.num_samples)))
+        N = min(4096, max(256, int(cfg.evaluation_inputs.num_samples)))
         x = rng.normal(size=(N, adapter.in_dim)).astype(np.float32)
         _run_single_layer_pipeline(adapter, edges, x, cfg, out_dir, results, label="dummy")
         return out_dir
@@ -738,8 +745,8 @@ def run(config_path: str | Path) -> Path:
         adapter = JacobiKANSingleLayerAdapter.from_arch(arch=arch, seed=seed)
         edges = adapter.extract_edges()
 
-        N = int(cfg.calibration.num_samples)
-        inp = _calib_inputs(cfg, raw)
+        N = int(cfg.evaluation_inputs.num_samples)
+        inp = _evaluation_inputs(cfg, raw)
         dist = str(getattr(inp, "distribution", "normal") or "normal").lower().strip()
 
         if dist == "uniform":
@@ -751,7 +758,7 @@ def run(config_path: str | Path) -> Path:
             std = float(getattr(inp, "std", 1.0))
             x = rng.normal(loc=mean, scale=std, size=(N, adapter.in_dim)).astype(np.float32)
         else:
-            raise ValueError(f"Unsupported calibration.inputs.distribution='{dist}' (use 'normal' or 'uniform').")
+            raise ValueError(f"Unsupported evaluation_inputs.inputs.distribution='{dist}' (use 'normal' or 'uniform').")
 
         clip_min = getattr(inp, "clip_min", None)
         clip_max = getattr(inp, "clip_max", None)
@@ -777,8 +784,8 @@ def run(config_path: str | Path) -> Path:
         )
         edges = adapter.extract_edges()
 
-        N = int(cfg.calibration.num_samples)
-        inp = _calib_inputs(cfg, raw)
+        N = int(cfg.evaluation_inputs.num_samples)
+        inp = _evaluation_inputs(cfg, raw)
         dist = str(getattr(inp, "distribution", "normal") or "normal").lower().strip()
 
         if dist == "uniform":
@@ -790,7 +797,7 @@ def run(config_path: str | Path) -> Path:
             std = float(getattr(inp, "std", 1.0))
             x = rng.normal(loc=mean, scale=std, size=(N, adapter.in_dim)).astype(np.float32)
         else:
-            raise ValueError(f"Unsupported calibration.inputs.distribution='{dist}' (use 'normal' or 'uniform').")
+            raise ValueError(f"Unsupported evaluation_inputs.inputs.distribution='{dist}' (use 'normal' or 'uniform').")
 
         clip_min = getattr(inp, "clip_min", None)
         clip_max = getattr(inp, "clip_max", None)

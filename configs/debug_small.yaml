@@ -21,7 +21,7 @@ debug:
   save_all_luts: true
   dump_quant_stats: true
 
-calibration:
+evaluation_inputs:
   num_samples: 128
   batch_size: 32
 

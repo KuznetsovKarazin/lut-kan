@@ -106,9 +106,9 @@ def _override_for_size(raw_merged: Dict[str, Any], size: int, out_root: Path, wa
     # runtime/debug keep as-is, but ensure runtime exists if you use it in runner
     _ensure_path(cfg, ["runtime"])
 
-    # dataset / calibration (runner currently uses cfg.calibration.num_samples)
-    calib = _ensure_path(cfg, ["calibration"])
-    calib["num_samples"] = int(calib.get("num_samples", 4096))
+    # evaluation inputs used for approximation/OOB/latency measurements
+    eval_inputs = _ensure_path(cfg, ["evaluation_inputs"])
+    eval_inputs["num_samples"] = int(eval_inputs.get("num_samples", 4096))
 
     # float_model: update arch according to the selected backend
     fm = _ensure_path(cfg, ["float_model"])
