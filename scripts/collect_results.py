@@ -115,16 +115,36 @@ def ci95(std: float, n: int) -> float:
 
 
 def agg_mean_std_ci(df: pd.DataFrame, group_cols: List[str], metric_cols: List[str]) -> pd.DataFrame:
-    g = df.groupby(group_cols, dropna=False)
-    means = g[metric_cols].mean(numeric_only=True).add_suffix("__mean")
-    stds = g[metric_cols].std(numeric_only=True, ddof=1).add_suffix("__std")
+    # Results from specialized sweeps may contain metric columns that are
+    # structurally present but entirely empty (for example, a speed field that
+    # is not measured in an OOB-only run).  Coerce candidate metrics to numeric
+    # and aggregate only columns with at least one finite/non-NaN value.
+    work = df.copy()
+    valid_metrics: List[str] = []
+    for c in metric_cols:
+        if c not in work.columns:
+            continue
+        work[c] = pd.to_numeric(work[c], errors="coerce")
+        if work[c].notna().any():
+            valid_metrics.append(c)
+
+    g = work.groupby(group_cols, dropna=False)
     counts = g.size().rename("n__count")
+
+    if not valid_metrics:
+        return counts.reset_index()
+
+    means = g[valid_metrics].mean().add_suffix("__mean")
+    stds = g[valid_metrics].std(ddof=1).add_suffix("__std")
     out = pd.concat([counts, means, stds], axis=1).reset_index()
 
-    for c in metric_cols:
+    for c in valid_metrics:
         std_col = f"{c}__std"
         ci_col = f"{c}__ci95"
-        out[ci_col] = [ci95(as_float(v), int(n)) for v, n in zip(out.get(std_col, []), out["n__count"])]
+        out[ci_col] = [
+            ci95(as_float(v), int(n))
+            for v, n in zip(out[std_col], out["n__count"])
+        ]
 
     return out
 
