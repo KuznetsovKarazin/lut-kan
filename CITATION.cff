@@ -1,7 +1,9 @@
-cff-version: 2.0.0
+cff-version: 1.2.0
 message: "If you use this software, please cite it."
 title: "LUT-KAN: Segment-wise LUT Quantization for Fast KAN Inference"
 type: software
+version: "2.2.0"
+date-released: "2026-08-15"
 authors:
   - family-names: "Kuznetsov"
     given-names: "Oleksandr"

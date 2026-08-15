@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lut-kan"
-version = "2.0.0"
+version = "2.2.0"
 description = "LUT-based inference for KAN with quantization and benchmarking"
 readme = "README.md"
 requires-python = ">=3.10"

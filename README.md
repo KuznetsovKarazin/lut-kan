@@ -12,19 +12,39 @@ This repository provides a reproducible benchmark suite for **segment-wise LUT (
 </p>
 <p align="center"><em>Physical hardware platforms validated in this work: Arduino Mega 2560 R3 (ATmega2560, 8-bit AVR) and ESP32-C3 SuperMini (RISC-V), shown with 1-euro coin for scale.</em></p>
 
-## What's New in v2.1
+## What's New in v2.2.0
 
-- 🔥 **Fixed-point LUT kernel**: Integer-only inner loop with Q16.16 arithmetic — **30–47% faster** than v2.0 mixed kernel
-- 🔬 **Ablation studies**: Quantization-only baseline proves speedup comes from LUT structure, not quantization
-- 🎯 **End-to-end trained model**: Sine regression KAN → LUT → MCU with negligible accuracy loss
-- 🔩 **Physical hardware validation**: Real-board measurements on Arduino Mega 2560 and ESP32-C3 SuperMini confirm Wokwi accuracy (<1% deviation)
-- 📊 **259 benchmark configurations** across 4 MCU platforms × 3 ISAs
+- ✅ **Endpoint-consistent LUT contract**: each spline segment now stores both endpoints, with
+  `x[k,l] = t[k] + l/(L-1) * (t[k+1]-t[k])`, `l=0,...,L-1`, matching the runtime interpolation scale.
+- 🧪 **NCA R1 reproducibility suite**: controlled numerical, genuine OOB-stress, DoS batch-1, and supplementary batch-scaling results are frozen under `reproducibility/ncaa_r1/`.
+- 🎯 **Matched DoS baselines**: the revised CICIDS2017 case study compares the same trained KAN using matched NumPy/Numba B-spline and LUT implementations.
+- 📐 **Explicit boundary semantics**: LUT sampling geometry is separated from `closed`/`half_open` runtime membership semantics; artifacts record `sample_grid=endpoint_inclusive`.
+- 🔍 **Quantization clarification**: per-segment affine quantization parameters are derived from sampled LUT values; no external calibration dataset determines the quantization range.
+- 🔥 **Fixed-point/MCU extensions retained**: integer-only Q16.16 kernels, ablations, end-to-end trained-model deployment, and physical Arduino Mega / ESP32-C3 validation remain part of the repository.
 
-**Previous versions:**
-- v2.0: MCU benchmarking via Wokwi, Jacobi polynomial basis, C code export
-- v1.0: CPU benchmarking (NumPy/Numba), B-spline support, publication tools
+**Previous tagged releases:**
+- v2.0.1: pre-R1 repository snapshot containing the MCU/Jacobi/fixed-point development line.
+- v2.0.0: MCU benchmarking via Wokwi, Jacobi polynomial basis functions, and C export.
 
 ## Key Results
+
+### NCA R1 Corrected CPU and Downstream Results
+
+The v2.2.0 release uses the endpoint-inclusive LUT contract described above. The complete machine-readable results are stored under [`reproducibility/ncaa_r1/`](reproducibility/ncaa_r1/).
+
+For the controlled B-spline experiment, increasing `L` reduces interpolation error initially, after which 8-bit quantization becomes dominant. The corrected results therefore do **not** use the earlier empirical `O(1/L)` error claim. `L=32` is a conservative generic accuracy-memory operating point for the controlled numerical study.
+
+For the leakage-free CICIDS2017 DoS Hulk classifier (`78 -> 32 -> 16 -> 1`, test `n=92,430`), task-level performance is already saturated at `L=16`:
+
+- Float PyKAN F1: **0.990017**
+- LUT (`L=16`) F1: **0.990028** (one benign-flow decision difference; not interpreted as an improvement)
+- LUT storage (`L=16`): **approximately 0.669 MiB**
+- Batch-1 median matched Numba B-spline -> LUT speedup: **approximately 26.8×**
+- `L=64` and `L=128` reproduce the Float PyKAN confusion matrix exactly.
+
+The primary deployment claim uses matched Numba-to-Numba timing rather than a cross-framework PyKAN/PyTorch comparison.
+
+The genuine OOB stress experiment uses unclipped Gaussian inputs and yields approximately **56.5%** of input vectors with at least one coordinate outside the LUT domain; the compiled evaluator preserves the selected policy-defined reference semantics.
 
 ### MCU Performance (Wokwi simulation, validated on real hardware)
 
@@ -67,14 +87,12 @@ Float MSE: 1.44×10⁻⁴ → LUT MSE: 1.62×10⁻⁴ (ΔMSE = 1.7×10⁻⁵)
 | Arduino Mega 2560 | 7 | **<0.1%** (cycle-accurate) |
 | ESP32-C3 SuperMini | 7 | **<1.0%** (instruction-accurate) |
 
-### CPU Performance (NumPy/Numba)
+### CPU Performance
 
-| L | B-spline (NumPy) | LUT (NumPy) | Speedup | B-spline (Numba) | LUT (Numba) | Speedup |
-|---|------------------|-------------|---------|------------------|-------------|---------|
-| 16 | 29.28 ms | 2.13 ms | 13.9× | 6.41 ms | 0.59 ms | 11.1× |
-| 32 | 26.47 ms | 2.48 ms | 11.5× | 5.70 ms | 0.64 ms | 9.5× |
-| 64 | 28.94 ms | 2.24 ms | 13.1× | 6.10 ms | 0.61 ms | 10.1× |
-| 128 | 27.24 ms | 2.34 ms | 12.0× | 6.08 ms | 0.60 ms | 10.2× |
+The previous pre-R1 CPU table has been superseded because it was generated before the endpoint-grid correction. Corrected endpoint-inclusive CPU results, including matched NumPy/Numba B-spline baselines, are available in:
+
+- [`reproducibility/ncaa_r1/controlled/table_speed.csv`](reproducibility/ncaa_r1/controlled/table_speed.csv)
+- [`reproducibility/ncaa_r1/dos_b1/latency_matched.csv`](reproducibility/ncaa_r1/dos_b1/latency_matched.csv)
 
 ## Three LUT Kernel Variants
 
@@ -227,7 +245,19 @@ cd mcu_auto
 python scripts/all.py --suite my_experiment --targets mega,esp32c3 --jobs 4
 ```
 
+## Reproducibility
+
+The compact reproducibility record for the NCA R1 revision is available at:
+
+[`reproducibility/ncaa_r1/`](reproducibility/ncaa_r1/)
+
+It contains aggregate and per-run controlled results, the OOB stress study, the primary batch-1 DoS benchmark, validation checks, memory accounting, and supplementary batch-scaling results. Large generated LUT artifacts and temporary run directories are intentionally excluded from Git.
+
+The leakage-free CICIDS2017 training pipeline and trained-model provenance are frozen separately in `KuznetsovKarazin/kan-dos-detection` at tag `ncaa-r1-dos-20260815`.
+
 ## Citation
+
+For software reproducibility, use the `v2.2.0` release together with the frozen `reproducibility/ncaa_r1/` record.
 
 If you use this work in your research, please cite:
 
