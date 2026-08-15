@@ -1,0 +1,13 @@
+oob_policy_mode,boundary_mode,value_representation,dtype,scheme,interp,L,n__count,model_bytes__mean,lut_bytes__mean,lut_over_model__mean,model_bytes__std,lut_bytes__std,lut_over_model__std,model_bytes__ci95,lut_bytes__ci95,lut_over_model__ci95
+clip_x,closed,spline_component,int8,symmetric,linear,16,5,6808.0,22460.0,3.2990599294947116,0.0,0.0,0.0,0.0,0.0,0.0
+clip_x,closed,spline_component,int8,symmetric,linear,32,5,6808.0,40380.0,5.931257344300823,0.0,0.0,0.0,0.0,0.0,0.0
+clip_x,closed,spline_component,int8,symmetric,linear,64,5,6808.0,76220.0,11.195652173913043,0.0,0.0,0.0,0.0,0.0,0.0
+clip_x,closed,spline_component,int8,symmetric,linear,128,5,6808.0,147900.0,21.724441833137487,0.0,0.0,0.0,0.0,0.0,0.0
+clip_x,closed,spline_component,uint8,asymmetric,linear,16,5,6808.0,22460.0,3.2990599294947116,0.0,0.0,0.0,0.0,0.0,0.0
+clip_x,closed,spline_component,uint8,asymmetric,linear,32,5,6808.0,40380.0,5.931257344300823,0.0,0.0,0.0,0.0,0.0,0.0
+clip_x,closed,spline_component,uint8,asymmetric,linear,64,5,6808.0,76220.0,11.195652173913043,0.0,0.0,0.0,0.0,0.0,0.0
+clip_x,closed,spline_component,uint8,asymmetric,linear,128,5,6808.0,147900.0,21.724441833137487,0.0,0.0,0.0,0.0,0.0,0.0
+clip_x,half_open,spline_component,int8,symmetric,linear,64,5,6808.0,76220.0,11.195652173913043,0.0,0.0,0.0,0.0,0.0,0.0
+clip_x,half_open,spline_component,uint8,asymmetric,linear,64,5,6808.0,76220.0,11.195652173913043,0.0,0.0,0.0,0.0,0.0,0.0
+zero_spline,closed,spline_component,int8,symmetric,linear,64,5,6808.0,76220.0,11.195652173913043,0.0,0.0,0.0,0.0,0.0,0.0
+zero_spline,half_open,spline_component,int8,symmetric,linear,64,5,6808.0,76220.0,11.195652173913043,0.0,0.0,0.0,0.0,0.0,0.0

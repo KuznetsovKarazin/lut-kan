@@ -1,0 +1,162 @@
+[
+  {
+    "seed": 0,
+    "boundary": "closed",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s0_L64_int8_symmetric_closed_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 0,
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s0_L64_int8_symmetric_closed_zero_spline_unclipped.yaml"
+  },
+  {
+    "seed": 0,
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s0_L64_int8_symmetric_half_open_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 0,
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s0_L64_int8_symmetric_half_open_zero_spline_unclipped.yaml"
+  },
+  {
+    "seed": 1,
+    "boundary": "closed",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s1_L64_int8_symmetric_closed_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 1,
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s1_L64_int8_symmetric_closed_zero_spline_unclipped.yaml"
+  },
+  {
+    "seed": 1,
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s1_L64_int8_symmetric_half_open_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 1,
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s1_L64_int8_symmetric_half_open_zero_spline_unclipped.yaml"
+  },
+  {
+    "seed": 2,
+    "boundary": "closed",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s2_L64_int8_symmetric_closed_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 2,
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s2_L64_int8_symmetric_closed_zero_spline_unclipped.yaml"
+  },
+  {
+    "seed": 2,
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s2_L64_int8_symmetric_half_open_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 2,
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s2_L64_int8_symmetric_half_open_zero_spline_unclipped.yaml"
+  },
+  {
+    "seed": 3,
+    "boundary": "closed",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s3_L64_int8_symmetric_closed_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 3,
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s3_L64_int8_symmetric_closed_zero_spline_unclipped.yaml"
+  },
+  {
+    "seed": 3,
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s3_L64_int8_symmetric_half_open_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 3,
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s3_L64_int8_symmetric_half_open_zero_spline_unclipped.yaml"
+  },
+  {
+    "seed": 4,
+    "boundary": "closed",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s4_L64_int8_symmetric_closed_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 4,
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s4_L64_int8_symmetric_closed_zero_spline_unclipped.yaml"
+  },
+  {
+    "seed": 4,
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s4_L64_int8_symmetric_half_open_clip_x_unclipped.yaml"
+  },
+  {
+    "seed": 4,
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "L": 64,
+    "dtype": "int8",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_oob_stress\\resolved_run_configs\\s4_L64_int8_symmetric_half_open_zero_spline_unclipped.yaml"
+  }
+]

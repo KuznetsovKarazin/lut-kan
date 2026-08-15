@@ -1,0 +1,542 @@
+[
+  {
+    "seed": 0,
+    "L": 16,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L16_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 16,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L16_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 32,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L32_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 32,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L32_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L64_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L64_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 128,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L128_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 128,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L128_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 16,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L16_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 16,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L16_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 32,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L32_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 32,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L32_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L64_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L64_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 128,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L128_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 128,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L128_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 16,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L16_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 16,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L16_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 32,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L32_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 32,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L32_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L64_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L64_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 128,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L128_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 128,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L128_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 16,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L16_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 16,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L16_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 32,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L32_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 32,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L32_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L64_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L64_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 128,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L128_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 128,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L128_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 16,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L16_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 16,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L16_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 32,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L32_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 32,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L32_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L64_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L64_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 128,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L128_int8_symmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 128,
+    "dtype": "uint8",
+    "boundary": "closed",
+    "oob": "clip_x",
+    "family": "main",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L128_uint8_asymmetric_closed_clip_x.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L64_int8_symmetric_closed_zero_spline.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L64_int8_symmetric_half_open_clip_x.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L64_int8_symmetric_half_open_zero_spline.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L64_int8_symmetric_closed_zero_spline.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L64_int8_symmetric_half_open_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L64_int8_symmetric_half_open_zero_spline.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L64_int8_symmetric_closed_zero_spline.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L64_int8_symmetric_half_open_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L64_int8_symmetric_half_open_zero_spline.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L64_int8_symmetric_closed_zero_spline.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L64_int8_symmetric_half_open_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L64_int8_symmetric_half_open_zero_spline.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "closed",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L64_int8_symmetric_closed_zero_spline.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L64_int8_symmetric_half_open_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 64,
+    "dtype": "int8",
+    "boundary": "half_open",
+    "oob": "zero_spline",
+    "family": "oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L64_int8_symmetric_half_open_zero_spline.yaml"
+  },
+  {
+    "seed": 0,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "scheme_oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s0_L64_uint8_asymmetric_half_open_clip_x.yaml"
+  },
+  {
+    "seed": 1,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "scheme_oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s1_L64_uint8_asymmetric_half_open_clip_x.yaml"
+  },
+  {
+    "seed": 2,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "scheme_oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s2_L64_uint8_asymmetric_half_open_clip_x.yaml"
+  },
+  {
+    "seed": 3,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "scheme_oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s3_L64_uint8_asymmetric_half_open_clip_x.yaml"
+  },
+  {
+    "seed": 4,
+    "L": 64,
+    "dtype": "uint8",
+    "boundary": "half_open",
+    "oob": "clip_x",
+    "family": "scheme_oob",
+    "config": "E:\\lut-kan-v2\\outputs\\ncaa_r1_controlled\\resolved_run_configs\\s4_L64_uint8_asymmetric_half_open_clip_x.yaml"
+  }
+]
